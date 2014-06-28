@@ -46,7 +46,7 @@ abstract class Phpfetcher_Page_Abstract {
     abstract public function init();
 
     /**
-     * @abstract get page's content, and save it into member variable <content>
+     * @abstract get page's content, and save it into member variable $content
      */
     abstract public function read();
 
