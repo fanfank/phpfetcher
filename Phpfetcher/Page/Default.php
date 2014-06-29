@@ -6,8 +6,21 @@
  */
 class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
     //TODO
-    private $_arrDefaultConf = array(
-        
+    protected $_arrAlias2Field = array(
+        /* bool */
+        'include_header' => array('curl_opt', 'CURLOPT_HEADER'),
+        'exclude_body'   => array('curl_opt', 'CURLOPT_NOBODY'),
+        'is_post'        => array('curl_opt', 'CURLOPT_POST'),
+        'is_verbose'     => array('curl_opt', 'CURLOPT_VERBOSE'),
+
+        /* int */
+    );
+
+    //TODO
+    protected $_arrDefaultConf = array(
+        'curl_opt' => array(
+            CURLOPT_RETURNTRANSFER => 0,    
+        ),
     );
 
     protected $_arrConf = array();
