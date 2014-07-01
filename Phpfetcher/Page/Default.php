@@ -6,50 +6,49 @@
  */
 class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
 
-    protected static $_arrAlias2Field = array(
+    protected static $_arrField2CurlOpt = array(
         /* bool */
-        'include_header' => array('curl_opt', CURLOPT_HEADER),
-        'exclude_body'   => array('curl_opt', CURLOPT_NOBODY),
-        'is_post'        => array('curl_opt', CURLOPT_POST),
-        'is_verbose'     => array('curl_opt', CURLOPT_VERBOSE),
+        'include_header' => CURLOPT_HEADER,
+        'exclude_body'   => CURLOPT_NOBODY,
+        'is_post'        => CURLOPT_POST,
+        'is_verbose'     => CURLOPT_VERBOSE,
+        'return_transfer'=> CURLOPT_RETURNTRANSFER,
 
         /* int */
-        'buffer_size'       => array('curl_opt', CURLOPT_BUFFERSIZE),
-        'connect_timeout'   => array('curl_opt', CURLOPT_CONNECTTIMEOUT),
-        'connect_timeout_ms' => array('curl_opt', CURLOPT_CONNECTTIMEOUT_MS),
-        'dns_cache_timeout' => array('curl_opt', CURLOPT_DNS_CACHE_TIMEOUT),
-        'max_redirs'        => array('curl_opt', CURLOPT_MAXREDIRS),
-        'port'              => array('curl_opt', CURLOPT_PORT),
-        'timeout'           => array('curl_opt', CURLOPT_TIMEOUT),
-        'timeout_ms'        => array('curl_opt', CURLOPT_TIMEOUT_MS),
+        'buffer_size'       => CURLOPT_BUFFERSIZE,
+        'connect_timeout'   => CURLOPT_CONNECTTIMEOUT,
+        'connect_timeout_ms' => CURLOPT_CONNECTTIMEOUT_MS,
+        'dns_cache_timeout' => CURLOPT_DNS_CACHE_TIMEOUT,
+        'max_redirs'        => CURLOPT_MAXREDIRS,
+        'port'              => CURLOPT_PORT,
+        'timeout'           => CURLOPT_TIMEOUT,
+        'timeout_ms'        => CURLOPT_TIMEOUT_MS,
 
         /* string */
-        'cookie'            => array('curl_opt', CURLOPT_COOKIE),
-        'cookie_file'       => array('curl_opt', CURLOPT_COOKIEFILE),
-        'cookie_jar'        => array('curl_opt', CURLOPT_COOKIEJAR),
-        'post_fields'       => array('curl_opt', CURLOPT_POSTFIELDS),
-        'url'               => array('curl_opt', CURLOPT_URL),
-        'user_agent'        => array('curl_opt', CURLOPT_USERAGENT),
-        'user_pwd'          => array('curl_opt', CURLOPT_USERPWD),
+        'cookie'            => CURLOPT_COOKIE,
+        'cookie_file'       => CURLOPT_COOKIEFILE,
+        'cookie_jar'        => CURLOPT_COOKIEJAR,
+        'post_fields'       => CURLOPT_POSTFIELDS,
+        'url'               => CURLOPT_URL,
+        'user_agent'        => CURLOPT_USERAGENT,
+        'user_pwd'          => CURLOPT_USERPWD,
 
         /* array */
-        'http_header'       => array('curl_opt', CURLOPT_HTTPHEADER),
+        'http_header'       => CURLOPT_HTTPHEADER,
 
         /* stream resource */
-        'file'              => array('curl_opt', CURLOPT_FILE),
+        'file'              => CURLOPT_FILE,
 
         /* function or a Closure */
-        'write_function'    => array('curl_opt', CURLOPT_WRITEFUNCTION),
+        'write_function'    => CURLOPT_WRITEFUNCTION,
     );
 
     protected $_arrDefaultConf = array(
-        'curl_opt' => array(
-            CURLOPT_CONNECTTIMEOUT => 10,
-            CURLOPT_MAXREDIRS      => 10,
-            CURLOPT_RETURNTRANSFER => 0,   //need this
-            CURLOPT_TIMEOUT        => 15,
-            CURLOPT_URL            => NULL,
-        ),
+            'connect_timeout' => 10,
+            'max_redirs'      => 10,
+            'return_transfer' => 0,   //need this
+            'timeout'         => 15,
+            'url'             => NULL,
     );
 
     protected $_arrConf = array();
@@ -60,31 +59,40 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
     /**
      * @author xuruiqi
      * @param in
-     *      string $alias: target alias
+     *      string $key: target conf option
      * @param out
      *      array: 
      *          int   errcode: error code, 0 represents success
      *          string errmsg: error message
      *          mixed     res: corresponding field value
-     * @abstract get an alias' corresponding field value.
+     * @abstract get a corresponding field value.
      */
-    protected function _alias2Field($alias) {
-        $alias = strval($alias);
+    protected function _getConfField($key) {
+        /*
+        // if $key is not an alias
 
-        if (!isset($this->_arrAlias2Field($alias))) {
-            $errcode = Phpfetcher_Error::ERR_INVALID_FIELD;
-            $arrOutput = array(
-                'errcode' => $errcode,    
-                'errmsg'  => Phpfetcher_Error::getErrmsg($errcode),
-            );
-            return $arrOutput;
+        // $key is an alias
+        $key = strval($key);
+
+        if (!isset($this->_arrAlias2Field($key))) {
+            return self::formatRes(NULL, Phpfetcher_Error::ERR_INVALID_FIELD);
         }
 
+        $target = $this->_arrConf;
+        foreach ($this->_arrAlias2Field[$key] as $field) {
+            if (isset($target[$field])) {
+                $target = $target[$field];
+            } else {
+                return self::formatRes(NULL, Phpfetcher_Error::ERR_FIELD_NOT_SET);
+            }
+        }
+        return self::formatRes($target, Phpfetcher_Error::ERR_SUCCESS);
+         */
+    }
 
-        $arrOutput = array(
-            'errcode' => Phpfetcher_Error::ERR_SUCCESS, 
-            'errmsg'  => Phpfetcher_Error::getErrmsg(Phpfetcher_Error::ERR_SUCCESS),
-        );
+    //TODO
+    protected function _setConfField($key) {
+
     }
 
     /**
@@ -104,10 +112,10 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
      * @abstract get a specified configuration.
      */
     public function getConfField($key) {
-        if (isset($_arrConf[$key])) {
-            return $this->_arrConf[$key];
+        if (isset($this->_arrConf($key))) {
+            return self::formatRes($this->_arrConf[$key], Phpfetcher_Error::ERR_SUCCESS);
         } else {
-            return false;
+            return self::formatRes(NULL, Phpfetcher_Error::ERR_FIELD_NOT_SET);
         }
     }
 
@@ -119,27 +127,23 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
      * @abstract get this page's URL.
      */
     public function getUrl() {
-        return $this->_arrConf[$url];
+        return $this->getConfField['url'];
     }
 
     /**
      * @author xuruiqi
      * @param in
-     *      $conf : array, configurations
+     *      array $conf : configurations
+     *      bool  $clear_default : whether to clear default options not set in $conf
      * @param out
      * @abstract initialize this instance with specified or default configuration
      */
-    public function init($conf = array()) {
+    public function init($conf = array(), $clear_default = FALSE) {
         $this->_arrConf = $this->_arrDefaultConf;
 
-        foreach($conf as $k => $v) {
-            if (isset($this->_arrConf[$k])) {
-                $this->_arrConf[$k] = $v;
-            } else {
-                //TODO
-                //Logging
-            }
-        }
+        $this->setConf($conf, $clear_default);
+
+        return $this;
     }
 
     /**
@@ -166,6 +170,13 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
 
     }
 
+    public static function formatRes($data, $errcode, $errmsg = NULL) {
+        if ($errmsg === NULL) {
+            $errmsg = Phpfetcher_Error::getErrmsg($errcode);
+        }
+        return array('errcode' => $errcode, 'errmsg' => $errmsg, 'res' => $data);
+    }
+
     /**
      * TODO
      * @author xuruiqi
@@ -185,19 +196,22 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
      * @param in
      *      array $conf : configurations
      * @param out
+     *      array : previous conf
      * @abstract set configurations.
      */
-    public function setConf($conf = array()) {
-        foreach($conf as $k => $v) {
-            if (isset($this->_arrConf[$k])) {
+    public function setConf($conf = array(), $clear_previous_conf = FALSE) {
+        $previous_conf = $this->_arrConf;
+        if ($clear_previous_conf === TRUE) {
+            $this->_arrConf = $conf;
+        } else {
+            foreach ($conf as $k => $v) {
                 $this->_arrConf[$k] = $v;
-            } else {
-                //TODO
-                //Logging
             }
         }
 
         //need re-init?
+
+        return $previous_conf;
     }
 
     /**
@@ -205,11 +219,16 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
      * @param in
      *      string $url : the URL
      * @param out
+     *      string : previous URL
      * @abstract set this page's URL.
      */
     public function setUrl($url) {
+        $previous_url = $this->_arrConf['url'];
         $this->_arrConf['url'] = $url;
+
         //need re-init?
+
+        return $previous_url;
     }
 }
 ?>
