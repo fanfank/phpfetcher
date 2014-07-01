@@ -5,21 +5,50 @@
  * @abstract Default Page class
  */
 class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
-    //TODO
-    protected $_arrAlias2Field = array(
+
+    protected static $_arrAlias2Field = array(
         /* bool */
-        'include_header' => array('curl_opt', 'CURLOPT_HEADER'),
-        'exclude_body'   => array('curl_opt', 'CURLOPT_NOBODY'),
-        'is_post'        => array('curl_opt', 'CURLOPT_POST'),
-        'is_verbose'     => array('curl_opt', 'CURLOPT_VERBOSE'),
+        'include_header' => array('curl_opt', CURLOPT_HEADER),
+        'exclude_body'   => array('curl_opt', CURLOPT_NOBODY),
+        'is_post'        => array('curl_opt', CURLOPT_POST),
+        'is_verbose'     => array('curl_opt', CURLOPT_VERBOSE),
 
         /* int */
+        'buffer_size'       => array('curl_opt', CURLOPT_BUFFERSIZE),
+        'connect_timeout'   => array('curl_opt', CURLOPT_CONNECTTIMEOUT),
+        'connect_timeout_ms' => array('curl_opt', CURLOPT_CONNECTTIMEOUT_MS),
+        'dns_cache_timeout' => array('curl_opt', CURLOPT_DNS_CACHE_TIMEOUT),
+        'max_redirs'        => array('curl_opt', CURLOPT_MAXREDIRS),
+        'port'              => array('curl_opt', CURLOPT_PORT),
+        'timeout'           => array('curl_opt', CURLOPT_TIMEOUT),
+        'timeout_ms'        => array('curl_opt', CURLOPT_TIMEOUT_MS),
+
+        /* string */
+        'cookie'            => array('curl_opt', CURLOPT_COOKIE),
+        'cookie_file'       => array('curl_opt', CURLOPT_COOKIEFILE),
+        'cookie_jar'        => array('curl_opt', CURLOPT_COOKIEJAR),
+        'post_fields'       => array('curl_opt', CURLOPT_POSTFIELDS),
+        'url'               => array('curl_opt', CURLOPT_URL),
+        'user_agent'        => array('curl_opt', CURLOPT_USERAGENT),
+        'user_pwd'          => array('curl_opt', CURLOPT_USERPWD),
+
+        /* array */
+        'http_header'       => array('curl_opt', CURLOPT_HTTPHEADER),
+
+        /* stream resource */
+        'file'              => array('curl_opt', CURLOPT_FILE),
+
+        /* function or a Closure */
+        'write_function'    => array('curl_opt', CURLOPT_WRITEFUNCTION),
     );
 
-    //TODO
     protected $_arrDefaultConf = array(
         'curl_opt' => array(
-            CURLOPT_RETURNTRANSFER => 0,    
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_MAXREDIRS      => 10,
+            CURLOPT_RETURNTRANSFER => 0,   //need this
+            CURLOPT_TIMEOUT        => 15,
+            CURLOPT_URL            => NULL,
         ),
     );
 
@@ -27,6 +56,36 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
 
     public __construct() {}
     public __destruct() {}
+
+    /**
+     * @author xuruiqi
+     * @param in
+     *      string $alias: target alias
+     * @param out
+     *      array: 
+     *          int   errcode: error code, 0 represents success
+     *          string errmsg: error message
+     *          mixed     res: corresponding field value
+     * @abstract get an alias' corresponding field value.
+     */
+    protected function _alias2Field($alias) {
+        $alias = strval($alias);
+
+        if (!isset($this->_arrAlias2Field($alias))) {
+            $errcode = Phpfetcher_Error::ERR_INVALID_FIELD;
+            $arrOutput = array(
+                'errcode' => $errcode,    
+                'errmsg'  => Phpfetcher_Error::getErrmsg($errcode),
+            );
+            return $arrOutput;
+        }
+
+
+        $arrOutput = array(
+            'errcode' => Phpfetcher_Error::ERR_SUCCESS, 
+            'errmsg'  => Phpfetcher_Error::getErrmsg(Phpfetcher_Error::ERR_SUCCESS),
+        );
+    }
 
     /**
      * @author xuruiqi
