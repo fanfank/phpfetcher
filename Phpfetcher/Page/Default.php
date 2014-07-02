@@ -51,10 +51,24 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
             'url'             => NULL,
     );
 
-    protected $_arrConf = array();
+    protected $_arrConf    = array();
+    protected $_curlHandle = NULL;
+    protected $_bolCloseCurlHandle = FALSE;
 
     public __construct() {}
-    public __destruct() {}
+    public __destruct() {
+        if ($this->$_bolCloseCurlHandle) {
+            curl_close($this->_curlHandle);
+        }
+    }
+
+    public static function formatRes($data, $errcode, $errmsg = NULL) {
+        if ($errmsg === NULL) {
+            $errmsg = Phpfetcher_Error::getErrmsg($errcode);
+        }
+        return array('errcode' => $errcode, 'errmsg' => $errmsg, 'res' => $data);
+    }
+
 
     /**
      * @author xuruiqi
@@ -138,10 +152,15 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
      * @param out
      * @abstract initialize this instance with specified or default configuration
      */
-    public function init($conf = array(), $clear_default = FALSE) {
+    public function init($curl_handle = NULL, $conf = array()) {
+        $this->_curlHandle = $curl_handle;
+        if (empty($this->_curlHandle)) {
+            $this->_curlHandle = curl_init();
+            $this->_bolCloseCurlHandle = TRUE;
+        }
         $this->_arrConf = $this->_arrDefaultConf;
 
-        $this->setConf($conf, $clear_default);
+        $this->msetConf($conf);
 
         return $this;
     }
@@ -160,21 +179,50 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
     }
 
     /**
-     * TODO
      * @author xuruiqi
      * @param in
+     *      array $conf : configurations
+     *      bool  $clear_previous_conf : if TRUE, then before set $conf, reset current configuration to its default value
      * @param out
-     * @abstract get page's content, and save it into member variable <content>
+     *      array : previous conf
+     * @abstract set configurations.
      */
-    public function read() {
+    public function msetConf($conf = array(), $clear_previous_conf = FALSE) {
+        $previous_conf = $this->_arrConf;
+        if ($clear_previous_conf === TRUE) {
+            $this->_arrConf = $this->_arrDefaultConf;
+        }
+        foreach ($conf as $k => $v) {
+            $this->_arrConf[$k] = $v;
+        }
 
+        $bolRes = TRUE;
+        if ($clear_previous_conf === TRUE) {
+            $bolRes = $this->_msetConf($this->_arrConf);
+        } else {
+            $bolRes = $this->_msetConf($conf);
+        }
+
+        if ($bolRes != TRUE) {
+            $this->_arrConf = $previous_conf;
+            $this->_msetConf($this->_arrConf);
+            return $bolRes;
+        }
+
+        return $previous_conf;
     }
 
-    public static function formatRes($data, $errcode, $errmsg = NULL) {
-        if ($errmsg === NULL) {
-            $errmsg = Phpfetcher_Error::getErrmsg($errcode);
+    protected function _msetConf($conf = array()) {
+        $arrCurlOpts = array();
+        foreach ($conf as $k => $v) {
+            if (isset($this->_arrField2CurlOpt[$k])) {
+                $arrCurlOpts[$this->_arrField2CurlOpt[$k]] = $v;
+            } else {
+                //currently only curl options can be set
+                $arrCurlOpts[$k] = $v;
+            }
         }
-        return array('errcode' => $errcode, 'errmsg' => $errmsg, 'res' => $data);
+        return curl_setopt_array($arrCurlOpts);
     }
 
     /**
@@ -190,28 +238,18 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
 
     }
 
-    /**
-     * TODO
-     * @author xuruiqi
-     * @param in
-     *      array $conf : configurations
-     * @param out
-     *      array : previous conf
-     * @abstract set configurations.
-     */
-    public function setConf($conf = array(), $clear_previous_conf = FALSE) {
-        $previous_conf = $this->_arrConf;
-        if ($clear_previous_conf === TRUE) {
-            $this->_arrConf = $conf;
+    public function setConf($field, $value) {
+        $this->_arrConf[$field] = $value;
+        return $this->_setConf($field, $value);
+    }
+
+    protected function _setConf($field, $value) {
+        if (isset(self::$_arrField2CurlOpt[$field])) {
+            return curl_setopt($this->_curlHandle, self::$_arrField2CurlOpt[$field], $value);
         } else {
-            foreach ($conf as $k => $v) {
-                $this->_arrConf[$k] = $v;
-            }
+            //currently only curl options can be set
+            return curl_setopt($this->_curlHandle, $field, $value);
         }
-
-        //need re-init?
-
-        return $previous_conf;
     }
 
     /**
@@ -224,11 +262,20 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
      */
     public function setUrl($url) {
         $previous_url = $this->_arrConf['url'];
-        $this->_arrConf['url'] = $url;
-
-        //need re-init?
-
+        $this->setConf('url', $url);
         return $previous_url;
     }
+
+    /**
+     * TODO
+     * @author xuruiqi
+     * @param in
+     * @param out
+     * @abstract get page's content, and save it into member variable <content>
+     */
+    public function read() {
+
+    }
+
 }
 ?>
