@@ -52,10 +52,13 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
     );
 
     protected $_arrConf    = array();
-    protected $_curlHandle = NULL;
     protected $_bolCloseCurlHandle = FALSE;
+    protected $_curlHandle = NULL;
+    protected $_dom        = NULL;
 
-    public __construct() {}
+    public __construct() {
+        $this->_dom = new DOMDocument();
+    }
     public __destruct() {
         if ($this->$_bolCloseCurlHandle) {
             curl_close($this->_curlHandle);
@@ -67,46 +70,6 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
             $errmsg = Phpfetcher_Error::getErrmsg($errcode);
         }
         return array('errcode' => $errcode, 'errmsg' => $errmsg, 'res' => $data);
-    }
-
-
-    /**
-     * @author xuruiqi
-     * @param in
-     *      string $key: target conf option
-     * @param out
-     *      array: 
-     *          int   errcode: error code, 0 represents success
-     *          string errmsg: error message
-     *          mixed     res: corresponding field value
-     * @abstract get a corresponding field value.
-     */
-    protected function _getConfField($key) {
-        /*
-        // if $key is not an alias
-
-        // $key is an alias
-        $key = strval($key);
-
-        if (!isset($this->_arrAlias2Field($key))) {
-            return self::formatRes(NULL, Phpfetcher_Error::ERR_INVALID_FIELD);
-        }
-
-        $target = $this->_arrConf;
-        foreach ($this->_arrAlias2Field[$key] as $field) {
-            if (isset($target[$field])) {
-                $target = $target[$field];
-            } else {
-                return self::formatRes(NULL, Phpfetcher_Error::ERR_FIELD_NOT_SET);
-            }
-        }
-        return self::formatRes($target, Phpfetcher_Error::ERR_SUCCESS);
-         */
-    }
-
-    //TODO
-    protected function _setConfField($key) {
-
     }
 
     /**
@@ -160,23 +123,43 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
         }
         $this->_arrConf = $this->_arrDefaultConf;
 
-        $this->msetConf($conf);
+        $this->msetConf($conf, TRUE);
 
         return $this;
     }
 
     /**
-     * TODO
      * @author xuruiqi
      * @param in
-     *      array $tags : 
+     *      array $ids : elements' ids
      * @param out
-     *      array : specified tags' contents
-     * @abstract select spcified tags' contents via xpath.
+     *      array : array of DOMElement, with keys equal each of ids
+     * @abstract select spcified elements with their ids.
      */
-    public function msel($tags) {
-
+    public function mselId($ids) {
+        $arrOutput = array();
+        foreach ($ids as $id) {
+            $arrOutput[$id] = $this->selId($id);
+        }
+        return $arrOutput;
     }
+
+    /**
+     * @author xuruiqi
+     * @param in
+     *      array $tags : elements' tags
+     * @param out
+     *      array : array of DOMNodeList, with keys equal each of tags 
+     * @abstract select spcified elements with their tags
+     */
+    public function mselTagName($tags) {
+        $arrOutput = array();
+        foreach ($tags as $tag) {
+            $arrOutput[$tag] = $this->selId($tag);
+        }
+        return $arrOutput;
+    }
+    
 
     /**
      * @author xuruiqi
@@ -226,16 +209,27 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
     }
 
     /**
-     * TODO
      * @author xuruiqi
      * @param in
-     *      string $tag : specifed tag
+     *      string $id : specifed element id
      * @param out
-     *      array : tag's contents 
-     * @abstract select spcified tag's contents via xpath.
+     *      object : DOMElement or NULL is not found
+     * @abstract select a spcified element via its id.
      */
-    public function sel($tag) {
+    public function selId($id) {
+        return $this->_dom->getElementById($id);
+    }
 
+    /**
+     * @author xuruiqi
+     * @param in
+     *      string $tag : specifed elements' tag name 
+     * @param out
+     *      object : a traversable DOMNodeList object containing all the matched elements
+     * @abstract select spcified elements via its tag name.
+     */
+    public function selTagName($tag) {
+        return $this->_dom->getElementsByTagName($tag);
     }
 
     public function setConf($field, $value) {
@@ -267,15 +261,21 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
     }
 
     /**
-     * TODO
      * @author xuruiqi
      * @param in
      * @param out
+     *      string : return page's content
+     *      bool   : if failed return FALSE
      * @abstract get page's content, and save it into member variable <content>
      */
     public function read() {
-
+        $this->content = curl_exec($this->_curlHandle);
+        if ($this->content != FALSE) {
+            if ($this->_dom->loadHTML($this->content) == FALSE) {
+                return FALSE;
+            }
+        }
+        return $this->content;
     }
-
 }
 ?>
