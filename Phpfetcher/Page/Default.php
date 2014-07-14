@@ -46,7 +46,7 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
     protected $_arrDefaultConf = array(
             'connect_timeout' => 10,
             'max_redirs'      => 10,
-            'return_transfer' => 0,   //need this
+            'return_transfer' => 1,   //need this
             'timeout'         => 15,
             'url'             => NULL,
     );
@@ -56,11 +56,11 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
     protected $_curlHandle = NULL;
     protected $_dom        = NULL;
 
-    public __construct() {
+    public function __construct() {
         $this->_dom = new DOMDocument();
     }
-    public __destruct() {
-        if ($this->$_bolCloseCurlHandle) {
+    public function __destruct() {
+        if ($this->_bolCloseCurlHandle) {
             curl_close($this->_curlHandle);
         }
     }
@@ -82,24 +82,28 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
 
     /**
      * @author xuruiqi
-     * @param in $key: specified field
-     * @param out
+     * @param $key: specified field
+     * @return
      *      bool  : false when field doesn't exist
      *      mixed : otherwise
      * @abstract get a specified configuration.
      */
     public function getConfField($key) {
-        if (isset($this->_arrConf($key))) {
+        if (isset($this->_arrConf[$key])) {
             return self::formatRes($this->_arrConf[$key], Phpfetcher_Error::ERR_SUCCESS);
         } else {
             return self::formatRes(NULL, Phpfetcher_Error::ERR_FIELD_NOT_SET);
         }
     }
 
+    public function getContent() {
+        return $this->_strContent;
+    }
+
     /**
      * @author xuruiqi
-     * @param in
-     * @param out
+     * @param
+     * @return
      *      string : current page's url
      * @abstract get this page's URL.
      */
@@ -109,10 +113,10 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
 
     /**
      * @author xuruiqi
-     * @param in
+     * @param
      *      array $conf : configurations
      *      bool  $clear_default : whether to clear default options not set in $conf
-     * @param out
+     * @return
      * @abstract initialize this instance with specified or default configuration
      */
     public function init($curl_handle = NULL, $conf = array()) {
@@ -130,9 +134,9 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
 
     /**
      * @author xuruiqi
-     * @param in
+     * @param
      *      array $ids : elements' ids
-     * @param out
+     * @return
      *      array : array of DOMElement, with keys equal each of ids
      * @abstract select spcified elements with their ids.
      */
@@ -146,9 +150,9 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
 
     /**
      * @author xuruiqi
-     * @param in
+     * @param
      *      array $tags : elements' tags
-     * @param out
+     * @return
      *      array : array of DOMNodeList, with keys equal each of tags 
      * @abstract select spcified elements with their tags
      */
@@ -163,10 +167,10 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
 
     /**
      * @author xuruiqi
-     * @param in
+     * @param
      *      array $conf : configurations
      *      bool  $clear_previous_conf : if TRUE, then before set $conf, reset current configuration to its default value
-     * @param out
+     * @return
      *      array : previous conf
      * @abstract set configurations.
      */
@@ -198,21 +202,21 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
     protected function _msetConf($conf = array()) {
         $arrCurlOpts = array();
         foreach ($conf as $k => $v) {
-            if (isset($this->_arrField2CurlOpt[$k])) {
-                $arrCurlOpts[$this->_arrField2CurlOpt[$k]] = $v;
+            if (isset(self::$_arrField2CurlOpt[$k])) {
+                $arrCurlOpts[self::$_arrField2CurlOpt[$k]] = $v;
             } else {
                 //currently only curl options can be set
                 $arrCurlOpts[$k] = $v;
             }
         }
-        return curl_setopt_array($arrCurlOpts);
+        return curl_setopt_array($this->_curlHandle, $arrCurlOpts);
     }
 
     /**
      * @author xuruiqi
-     * @param in
+     * @param
      *      string $id : specifed element id
-     * @param out
+     * @return
      *      object : DOMElement or NULL is not found
      * @abstract select a spcified element via its id.
      */
@@ -222,9 +226,9 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
 
     /**
      * @author xuruiqi
-     * @param in
+     * @param
      *      string $tag : specifed elements' tag name 
-     * @param out
+     * @return
      *      object : a traversable DOMNodeList object containing all the matched elements
      * @abstract select spcified elements via its tag name.
      */
@@ -248,9 +252,9 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
 
     /**
      * @author xuruiqi
-     * @param in
+     * @param
      *      string $url : the URL
-     * @param out
+     * @return
      *      string : previous URL
      * @abstract set this page's URL.
      */
@@ -262,20 +266,20 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
 
     /**
      * @author xuruiqi
-     * @param in
-     * @param out
+     * @param
+     * @return
      *      string : return page's content
      *      bool   : if failed return FALSE
-     * @abstract get page's content, and save it into member variable <content>
+     * @abstract get page's content, and save it into member variable <_strContent>
      */
     public function read() {
-        $this->content = curl_exec($this->_curlHandle);
-        if ($this->content != FALSE) {
-            if ($this->_dom->loadHTML($this->content) == FALSE) {
+        $this->_strContent = curl_exec($this->_curlHandle);
+        if ($this->_strContent != FALSE) {
+            if ($this->_dom->loadHTML($this->_strContent) == FALSE) {
                 return FALSE;
             }
         }
-        return $this->content;
+        return $this->_strContent;
     }
 }
 ?>

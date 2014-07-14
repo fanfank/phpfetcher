@@ -11,20 +11,20 @@ abstract class Phpfetcher_Page_Abstract {
     protected $_strContent = NULL;
 
     //TODO
-    public __construct() {
+    public function __construct() {
 
     }
 
     //TODO
-    public __destruct() {
+    public function __destruct() {
 
     }
 
-    public __get($key) {
+    public function __get($key) {
         echo $key, 'doesn\'t exist!';
     }
 
-    public __set($key, $val) {
+    public function __set($key, $val) {
         echo "Can't assign '$val' to $key!";
     }
 
@@ -38,22 +38,17 @@ abstract class Phpfetcher_Page_Abstract {
     /**
      * @abstract get page's URL.
      */
-    abstract public function getUrl();
+    abstract function getUrl();
 
     /**
      * @abstract initialize this instance with specified or default configuration
      */
-    abstract public function init();
+    abstract function init();
 
     /**
      * @abstract get page's content, and save it into member variable $content
      */
-    abstract public function read();
-
-    /**
-     * @abstract select spcified tags' contents.
-     */
-    abstract public function sel();
+    abstract function read();
 
     /**
      * @abstract set configurations.
@@ -65,6 +60,6 @@ abstract class Phpfetcher_Page_Abstract {
     /**
      * @abstract set page's URL.
      */
-    abstract public function setUrl();
+    abstract function setUrl($url);
 }
 ?>

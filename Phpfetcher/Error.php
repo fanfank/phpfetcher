@@ -13,7 +13,7 @@ class Phpfetcher_Error {
     );
 
     public static getErrmsg($errcode) {
-        return self::$_arrErrcode2Errmsg[$errcode];
+        return self::$_arrErrcode2Errmsg[$errcode] . "\n";
     }
 }
 ?>
