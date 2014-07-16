@@ -15,9 +15,23 @@ class Phpfetcher_Log {
     }
 
     static protected function _print($strMsg, $log_level) {
+        /*
         if ($log_level == self::LOG_LEVEL_WARNING) {
             $strMsg = 'Warning: ' . $strMsg . "\n";
             echo $strMsg;
+        }
+        */
+        switch($log_level) {
+            case self::LOG_LEVEL_FATAL:
+                break;
+            case self::LOG_LEVEL_WARNING:
+                $strMsg = 'Warning: ' . $strMsg . "\n";
+                echo $strMsg;
+                break;
+            case self::LOG_LEVEL_NOTICE:
+                break;
+            case self::LOG_LEVEL_DEBUG:
+                break;
         }
     }
 }
