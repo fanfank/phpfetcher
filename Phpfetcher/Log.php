@@ -11,10 +11,10 @@ class Phpfetcher_Log {
 
     static public function warning($strMsg) {
         $strMsg = strval($strMsg);
-        self::_print($strMsg, self::LOG_LEVEL_WARNING);
+        self::_print(self::LOG_LEVEL_WARNING, $strMsg);
     }
 
-    static protected function _print($strMsg, $log_level) {
+    static protected function _print($log_level, $strMsg) {
         /*
         if ($log_level == self::LOG_LEVEL_WARNING) {
             $strMsg = 'Warning: ' . $strMsg . "\n";
