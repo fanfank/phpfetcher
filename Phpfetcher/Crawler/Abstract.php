@@ -10,23 +10,25 @@ abstract class Phpfetcher_Crawler_Abstract {
     protected $arrPreFetchHooks  = array();
 
     //添加爬虫的爬取规则
-    abstract function addFetchRules($arrInput);
+    abstract function addFetchJobs($arrInput);
 
     //删除一条已有的爬取规则
-    public function deleteFetchRule($rule_pos) {
-        Phpfetcher_Error::notice('deleteFetchRule not implemented');
+    public function deleteFetchJobs($arrInput) {
+        Phpfetcher_Log::notice('not implemented');
     }
 
     //查看已有的爬取规则
-    abstract function getFetchRules();
+    abstract function getFetchJobs();
 
+    /*
     //修改一条已有的规则
-    public function modifyFetchRule($rule_pos, $new_rule) {
-        Phpfetcher_Error::notice('modifyFetchRule not implemented');
+    public function setFetchJobByName() {
+        Phpfetcher_Error::notice('not implemented');
     }
+     */
 
     //替换爬取规则为传入的规则
-    abstract function replaceFetchRules($arrInput);
+    abstract function setFetchJobs($arrInput);
 
     //运行爬虫
     abstract function run();

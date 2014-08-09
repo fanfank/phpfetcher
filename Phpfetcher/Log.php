@@ -14,6 +14,11 @@ class Phpfetcher_Log {
         self::_print(self::LOG_LEVEL_WARNING, $strMsg);
     }
 
+    static public function notice($strMsg) {
+        $strMsg = strval($strMsg);
+        self::_print(self::LOG_LEVEL_NOTICE, $strMsg);
+    }
+
     static protected function _print($log_level, $strMsg) {
         /*
         if ($log_level == self::LOG_LEVEL_WARNING) {
@@ -29,6 +34,8 @@ class Phpfetcher_Log {
                 echo $strMsg;
                 break;
             case self::LOG_LEVEL_NOTICE:
+                $strMsg = 'Notice: ' . $strMsg . "\n";
+                echo $strMsg;
                 break;
             case self::LOG_LEVEL_DEBUG:
                 break;
