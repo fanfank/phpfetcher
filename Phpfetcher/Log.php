@@ -9,14 +9,25 @@ class Phpfetcher_Log {
 
     }
 
-    static public function warning($strMsg) {
+    static public function debug($strMsg) {
         $strMsg = strval($strMsg);
-        self::_print(self::LOG_LEVEL_WARNING, $strMsg);
+        self::_print(self::LOG_LEVEL_DEBUG, $strMsg);
     }
 
     static public function notice($strMsg) {
         $strMsg = strval($strMsg);
         self::_print(self::LOG_LEVEL_NOTICE, $strMsg);
+    }
+
+    static public function warning($strMsg) {
+        $strMsg = strval($strMsg);
+        self::_print(self::LOG_LEVEL_WARNING, $strMsg);
+    }
+
+
+    static public function fatal($strMsg) {
+        $strMsg = strval($strMsg);
+        self::_print(self::LOG_LEVEL_FATAL, $strMsg);
     }
 
     static protected function _print($log_level, $strMsg) {
@@ -28,6 +39,8 @@ class Phpfetcher_Log {
         */
         switch($log_level) {
             case self::LOG_LEVEL_FATAL:
+                $strMsg = 'Fatal: ' . $strMsg . "\n";
+                echo $strMsg;
                 break;
             case self::LOG_LEVEL_WARNING:
                 $strMsg = 'Warning: ' . $strMsg . "\n";
@@ -38,6 +51,8 @@ class Phpfetcher_Log {
                 echo $strMsg;
                 break;
             case self::LOG_LEVEL_DEBUG:
+                $strMsg = 'Debug: ' . $strMsg . "\n";
+                echo $strMsg;
                 break;
         }
     }

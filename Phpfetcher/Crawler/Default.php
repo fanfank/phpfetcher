@@ -5,12 +5,18 @@
  * @desc 爬虫对象的默认类
  *       Crawler objects' default class
  */
-abstract class Phpfetcher_Crawler_Default {
+abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
 
     const MAX_DEPTH = 20;
     const MAX_PAGE_NUM = -1;
+    const MODIFY_JOBS_SET = 1;
+    const MODIFY_JOBS_DEL = 2;
+    const MODIFY_JOBS_ADD = 3;
+    const DEFAULT_PAGE_CLASS = 'Phpfetcher_Page_Default';
+    const ABSTRACT_PAGE_CLASS = 'Phpfetcher_Page_Abstract';
 
     protected $_arrFetchJobs = array();
+    protected $_objPage = NULL; //Phpfetcher_Page_Default;
 
     /**
      * @author xuruiqi
@@ -18,7 +24,7 @@ abstract class Phpfetcher_Crawler_Default {
      *      array $arrInput:
      *          array <任务名1> :
      *              string 'start_page',    //爬虫的起始页面
-     *              array  'regex_rules':   //爬虫跟踪的超链接需要满足的正则表达式，依次检查规则，匹配其中任何一条即可
+     *              array  'link_rules':   //爬虫跟踪的超链接需要满足的正则表达式，依次检查规则，匹配其中任何一条即可
      *                  string 0,   //正则表达式1
      *                  string 1,   //正则表达式2
      *                  ...
@@ -40,7 +46,7 @@ abstract class Phpfetcher_Crawler_Default {
      *       cover the old ones.
      */
     public function &addFetchJobs($arrInput = array()) {
-        return $this->setFetchJobs($arrInput, FALSE);
+        return $this->_modifyFetchJobs($arrInput, self::MODIFY_JOBS_ADD);
     }
 
     /**
@@ -57,11 +63,7 @@ abstract class Phpfetcher_Crawler_Default {
      * @desc delete fetch rules according to job names
      */
     public function &delFetchJobs($arrInput = array()) {
-        //$arrNotFoundJobs = array();
-        foreach ($arrInput as $job_name) {
-            unset($this->_arrFetchJobs[$job_name]);
-        }
-        return $this;
+        return $this->_modifyFetchJobs($arrInput, self::MODIFY_JOBS_DEL);
     }
 
     public function getFetchJobByName($job_name) {
@@ -74,44 +76,96 @@ abstract class Phpfetcher_Crawler_Default {
 
     /**
      * @author xuruiqi
-     * @param : 参见addFetchJobs的入参$arrInput
+     * @param : 
+     *      //$intOptType === MODIFY_JOBS_SET|MODIFY_JOBS_ADD,
+     *        $arrInput参见addFetchJobs的入参$arrInput
+     *      //$intOptType === MODIFY_JOBS_DEL,
+     *        $arrInput参见delFetchJobs的入参$arrInput
      *
      * @return
      *      Object $this : returns the instance itself
      * @desc set fetch rules.
      */
-    public function &setFetchJobs($arrInput = array(), $bolClearPrevious = TRUE) {
-        if ($bolClearPrevious) {
-            $arrInvalidJobs = array();
-        }
-        $this->_arrFetchJobs = array();
-        foreach ($arrInput as $job_name => $job_rules) {
-            if ($this->_isJobValid($job_rules)) {
-                $this->_arrFetchJobs[$job_name] = $job_rules;
-            } else {
-                $arrInvalidJobs[] = $job_name;
+    protected function &_modifyFetchJobs($arrInput = array(), $intOptType) {
+        $arrInvalidJobs = array();
+        if ($intOptType === self::MODIFY_JOBS_SET || $intOptType === self::MODIFY_JOBS_ADD) {
+            if ($intOptType === self::MODIFY_JOBS_SET) {
+                $this->_arrFetchJobs = array();
             }
+            foreach ($arrInput as $job_name => $job_rules) {
+                if ($this->_isJobValid($job_rules)) {
+                    $this->_arrFetchJobs[$job_name] = $job_rules;
+                } else {
+                    $arrInvalidJobs[] = $job_name;
+                }
+            }
+        } else if ($intOptType === self::MODIFY_JOBS_DEL) {
+            foreach ($arrInput as $job_name) {
+                unset($this->_arrFetchJobs[$job_name]);
+            }
+        } else {
+            Phpfetcher_Log::warning("Unknown options for fetch jobs [{$intOptType}]");
         }
-        Phpfetcher_Log::notice('Invalid jobs:' . implode(',', $arrInvalidJobs));
+
+
+        if (!empty($arrInvalidJobs)) {
+            Phpfetcher_Log::notice('Invalid jobs:' . implode(',', $arrInvalidJobs));
+        }
         return $this;
     }
 
     /**
      * @author xuruiqi
+     * @param : 参见addFetchJobs的入参$arrInput
+     *
      * @return
+     *      Object $this : returns the instance itself
+     * @desc set fetch jobs.
+     */
+    public function &setFetchJobs($arrInput = array()) {
+        return $this->_modifyFetchJobs($arrInput, self::MODIFY_JOBS_SET);
+    }
+
+    /**
+     * @author xuruiqi
+     * @param
+     *      array $arrInput : //运行设定
+     *          string 'page_class_name' : //指定要使用的Page类型，必须是
+     *                                     //Phpfetcher_Page_Abstract的
+     *                                     //子类
+     * @return
+     *      obj $this
      * @desc
      */
     public function &run($arrInput = array()) {
+        //构建Page对象
+        $strPageClassName = strval($arrInput['page_class_name']);
+        if (empty($strPageClassName)) {
+            $strPageClassName = self::DEFAULT_PAGE_CLASS;
+        }
+        try {
+            if (!($strPageClassName instanceof self::ABSTRACT_PAGE_CLASS)) {
+                throw new Exception("[$strPageClassName] is not an instance of " . self::ABSTRACT_PAGE_CLASS);
+            }
+            $objPage = new $strPageClassName;
+        } catch (Exception $e) {
+            Phpfetcher_Log::fatal($e->getMessage());
+            return $this;
+        }
 
+        //遍历任务队列
+
+
+
+        return $this;
     }
-
 
     /**
      * @author xuruiqi
      * @desc check if a rule is valid
      */
     protected function _isJobValid($arrRule) {
-        if (empty($arrRule['start_page']) || !is_array($arrRule['regex_rules']) || empty($arrRule['regex_rules'])) {
+        if (empty($arrRule['start_page']) || !is_array($arrRule['link_rules']) || empty($arrRule['link_rules'])) {
             return FALSE;
         }
         return TRUE;
