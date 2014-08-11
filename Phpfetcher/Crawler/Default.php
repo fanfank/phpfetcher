@@ -16,7 +16,7 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
     const ABSTRACT_PAGE_CLASS = 'Phpfetcher_Page_Abstract';
 
     protected $_arrFetchJobs = array();
-    protected $_objPage = NULL; //Phpfetcher_Page_Default;
+    //protected $_objPage = NULL; //Phpfetcher_Page_Default;
 
     /**
      * @author xuruiqi
@@ -73,6 +73,12 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
     public function getFetchJobs() {
         return $this->_arrFetchJobs;
     }
+
+    /*
+    public function handlePage(Phpfetcher_Page_Abstract) {
+        //由用户继承本类并实现此方法
+    }
+     */
 
     /**
      * @author xuruiqi
@@ -164,11 +170,11 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
             $objPage->setConf($arrPageConf);
         }
 
-        //遍历任务队列
         if (empty($this->_arrFetchJobs)) {
             Phpfetcher_Log::warning("No fetch jobs.");
             return $this;
         }
+        //遍历任务队列
         foreach ($this->_arrFetchJobs as $job_name => $job_rules) {
             if (!($this->_isJobValid($job_rules))) {
                 Phpfetcher_Log::warning("Job rules invalid [" . serialize($job_rules) . "]");
@@ -182,6 +188,7 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
                 0 => array($job_rules['start_page']),   
                 1 => array(),
             );
+
             //开始爬取
             while ($intDepth < $job_rules['max_depth'] && ($job_rules['max_pages'] === -1 || $intPageNum < $job_rules['max_pages'])) {
                 $intDepath += 1;
@@ -196,12 +203,8 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
                     $objPage->read();
 
                     //获取所有的超链接
-                    $arrLinks = array();
-                    $res = $page->xpath('//a/@href');
-                    for($i = 0; $i < $res->length;++$i) {
-                        $arrLinks[] = $res->item($i)->nodeValue;
-                    }
-                    //print_r($arrLinks);
+                    $arrLinks = $page->getHyperLinks();
+                    
                     //匹配超链接
                     foreach ($job_rules['link_rules'] as $link_rule) {
                         foreach ($arrLinks as $link) {
@@ -211,16 +214,13 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
                         }
                     }
 
-                    $this->handPage($objPage);
+                    //由用户实现handlePage函数
+                    $this->handlePage($objPage);
                     $intPageNum += 1;
                 } 
                 self::_swap($arrIndice[0], $arrIndice[1]);
             }
-            //TODO
         }
-
-
-
         return $this;
     }
 
@@ -240,6 +240,5 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
         $b = $a;
         $a = $tmp;
     }
-
 }
 ?>

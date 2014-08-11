@@ -10,12 +10,10 @@ abstract class Phpfetcher_Page_Abstract {
     
     protected $_strContent = NULL;
 
-    //TODO
     public function __construct() {
 
     }
 
-    //TODO
     public function __destruct() {
 
     }

@@ -102,7 +102,12 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
     }
 
     public function getHyperLinks() {
-        $dom_node_list = $this->xpath('a');
+        $arrLinks = array();
+        $this->xpath('//a/@href');
+        for($i = 0; $i < $res->length;++$i) {
+            $arrLinks[] = $res->item($i)->nodeValue;
+        }
+        return $arrLinks;
     }
 
     /**
