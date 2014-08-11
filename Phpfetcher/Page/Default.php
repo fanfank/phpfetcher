@@ -101,6 +101,10 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
         return $this->_strContent;
     }
 
+    public function getHyperLinks() {
+        $dom_node_list = $this->xpath('a');
+    }
+
     /**
      * @author xuruiqi
      * @param
@@ -128,7 +132,7 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
         }
         $this->_arrConf = $this->_arrDefaultConf;
 
-        $this->msetConf($conf, TRUE);
+        $this->setConf($conf, TRUE);
 
         return $this;
     }
@@ -187,7 +191,7 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
      *      array : previous conf
      * @desc set configurations.
      */
-    public function msetConf($conf = array(), $clear_previous_conf = FALSE) {
+    public function setConf($conf = array(), $clear_previous_conf = FALSE) {
         $previous_conf = $this->_arrConf;
         if ($clear_previous_conf === TRUE) {
             $this->_arrConf = $this->_arrDefaultConf;
@@ -198,21 +202,21 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
 
         $bolRes = TRUE;
         if ($clear_previous_conf === TRUE) {
-            $bolRes = $this->_msetConf($this->_arrConf);
+            $bolRes = $this->_setConf($this->_arrConf);
         } else {
-            $bolRes = $this->_msetConf($conf);
+            $bolRes = $this->_setConf($conf);
         }
 
         if ($bolRes != TRUE) {
             $this->_arrConf = $previous_conf;
-            $this->_msetConf($this->_arrConf);
+            $this->_setConf($this->_arrConf);
             return $bolRes;
         }
 
         return $previous_conf;
     }
 
-    protected function _msetConf($conf = array()) {
+    protected function _setConf($conf = array()) {
         $arrCurlOpts = array();
         foreach ($conf as $k => $v) {
             if (isset(self::$_arrField2CurlOpt[$k])) {
@@ -261,12 +265,12 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
         return $this->_dom->getElementsByTagName($tag);
     }
 
-    public function setConf($field, $value) {
+    public function setConfField($field, $value) {
         $this->_arrConf[$field] = $value;
-        return $this->_setConf($field, $value);
+        return $this->_setConfField($field, $value);
     }
 
-    protected function _setConf($field, $value) {
+    protected function _setConfField($field, $value) {
         if (isset(self::$_arrField2CurlOpt[$field])) {
             return curl_setopt($this->_curlHandle, self::$_arrField2CurlOpt[$field], $value);
         } else {
@@ -285,7 +289,7 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
      */
     public function setUrl($url) {
         $previous_url = $this->_arrConf['url'];
-        $this->setConf('url', $url);
+        $this->setConfField('url', $url);
         return $previous_url;
     }
 

@@ -31,9 +31,10 @@ abstract class Phpfetcher_Page_Abstract {
     /**
      * @abstract get configurations.
      */
-    public function getConf() {
-        echo 'Not implemented';
-    }
+    abstract function getConf();
+    //{
+        //echo 'Not implemented';
+    //}
 
     /**
      * @abstract get page's URL.
@@ -53,13 +54,17 @@ abstract class Phpfetcher_Page_Abstract {
     /**
      * @abstract set configurations.
      */
-    public function setConf($conf = array()) {
-        echo 'Not implemented';
-    }
+    abstract function setConf($conf = array());
+    //{
+        //echo 'Not implemented';
+    //}
 
     /**
      * @abstract set page's URL.
      */
     abstract function setUrl($url);
+
+    //取出$_strContent中的所有<a>标签的内容，以数组形式返回
+    abstract function getHyperLinks();
 }
 ?>

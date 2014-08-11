@@ -133,12 +133,15 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
      *          string 'page_class_name' : //指定要使用的Page类型，必须是
      *                                     //Phpfetcher_Page_Abstract的
      *                                     //子类
+     *          [array 'page_conf'] : //Page调用setConf时的输入参数，可选
      * @return
      *      obj $this
      * @desc
      */
     public function &run($arrInput = array()) {
+
         //构建Page对象
+        $objPage = NULL;
         $strPageClassName = strval($arrInput['page_class_name']);
         if (empty($strPageClassName)) {
             $strPageClassName = self::DEFAULT_PAGE_CLASS;
@@ -152,8 +155,69 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
             Phpfetcher_Log::fatal($e->getMessage());
             return $this;
         }
+        $arrPageConf = $arrInput['page_conf'];
+        $objPage->init();
+        if (!empty($arrPageConf)) {
+            if(isset($arrPageConf['url'])) {
+                unset($arrPageConf['url']);
+            }
+            $objPage->setConf($arrPageConf);
+        }
 
         //遍历任务队列
+        if (empty($this->_arrFetchJobs)) {
+            Phpfetcher_Log::warning("No fetch jobs.");
+            return $this;
+        }
+        foreach ($this->_arrFetchJobs as $job_name => $job_rules) {
+            if (!($this->_isJobValid($job_rules))) {
+                Phpfetcher_Log::warning("Job rules invalid [" . serialize($job_rules) . "]");
+                continue;
+            }
+
+            $intDepth   = 0;
+            $intPageNum = 0;
+            $arrIndice = array(0, 1);
+            $arrJobs = array(
+                0 => array($job_rules['start_page']),   
+                1 => array(),
+            );
+            //开始爬取
+            while ($intDepth < $job_rules['max_depth'] && ($job_rules['max_pages'] === -1 || $intPageNum < $job_rules['max_pages'])) {
+                $intDepath += 1;
+                $intPopIndex = $arrIndice[0];
+                $intPushIndex = $arrIndice[1];
+                $arrJobs[$intPushIndex] = array();
+                foreach ($arrJobs[$intPopIndex] as $url) {
+                    if (!($job_rules['max_pages'] === -1 || $intPageNum < $job_rules['max_pages'])) {
+                        break;
+                    }
+                    $objPage->setUrl($url);
+                    $objPage->read();
+
+                    //获取所有的超链接
+                    $arrLinks = array();
+                    $res = $page->xpath('//a/@href');
+                    for($i = 0; $i < $res->length;++$i) {
+                        $arrLinks[] = $res->item($i)->nodeValue;
+                    }
+                    //print_r($arrLinks);
+                    //匹配超链接
+                    foreach ($job_rules['link_rules'] as $link_rule) {
+                        foreach ($arrLinks as $link) {
+                            if (preg_match($link_rule, $link) === 1) {
+                                $arrJobs[$intPushIndex][] = $link;
+                            }
+                        }
+                    }
+
+                    $this->handPage($objPage);
+                    $intPageNum += 1;
+                } 
+                self::_swap($arrIndice[0], $arrIndice[1]);
+            }
+            //TODO
+        }
 
 
 
@@ -169,6 +233,12 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
             return FALSE;
         }
         return TRUE;
+    }
+
+    protected static function _swap(&$a, &$b) {
+        $tmp = $a;
+        $b = $a;
+        $a = $tmp;
     }
 
 }
