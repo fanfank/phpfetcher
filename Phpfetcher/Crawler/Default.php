@@ -75,7 +75,7 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
     }
 
     /*
-    public function handlePage(Phpfetcher_Page_Abstract) {
+    public function handlePage() {
         //由用户继承本类并实现此方法
     }
      */
