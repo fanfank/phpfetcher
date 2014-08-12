@@ -6,7 +6,6 @@
  *       Crawler objects' default class
  */
 abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
-
     const MAX_DEPTH = 20;
     const MAX_PAGE_NUM = -1;
     const MODIFY_JOBS_SET = 1;
@@ -14,6 +13,25 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
     const MODIFY_JOBS_ADD = 3;
     const DEFAULT_PAGE_CLASS = 'Phpfetcher_Page_Default';
     const ABSTRACT_PAGE_CLASS = 'Phpfetcher_Page_Abstract';
+
+    const INT_TYPE = 1;
+    const STR_TYPE = 2;
+    const ARR_TYPE = 3;
+
+    protected static $arrJobFieldTypes = array(
+        'start_page' => self::STR_TYPE, 
+        'link_rules' => self::ARR_TYPE, 
+        'max_depth'  => self::INT_TYPE, 
+        'max_pages'  => self::INT_TYPE,
+    );
+
+    /*
+    protected static $arrJobDefaultFields = array(
+        'max_depth' => self::MAX_DEPTH,
+        'max_pages' => self::MAX_PAGE_NUM,
+    );
+     */
+
 
     protected $_arrFetchJobs = array();
     //protected $_objPage = NULL; //Phpfetcher_Page_Default;
@@ -99,6 +117,7 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
                 $this->_arrFetchJobs = array();
             }
             foreach ($arrInput as $job_name => $job_rules) {
+                $this->_correctJobParam($job_rules);
                 if ($this->_isJobValid($job_rules)) {
                     $this->_arrFetchJobs[$job_name] = $job_rules;
                 } else {
@@ -145,6 +164,10 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
      * @desc
      */
     public function &run($arrInput = array()) {
+        if (empty($this->_arrFetchJobs)) {
+            Phpfetcher_Log::warning("No fetch jobs.");
+            return $this;
+        }
 
         //构建Page对象
         $objPage = NULL;
@@ -153,14 +176,20 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
             $strPageClassName = self::DEFAULT_PAGE_CLASS;
         }
         try {
-            if (!($strPageClassName instanceof self::ABSTRACT_PAGE_CLASS)) {
+            if (!class_exists($strPageClassName, TRUE)) {
+                throw new Exception("[$strPageClassName] class not exists!");
+            }
+
+            $objPage = new $strPageClassName;
+            if (!($objPage instanceof Phpfetcher_Page_Abstract)) {
                 throw new Exception("[$strPageClassName] is not an instance of " . self::ABSTRACT_PAGE_CLASS);
             }
-            $objPage = new $strPageClassName;
         } catch (Exception $e) {
             Phpfetcher_Log::fatal($e->getMessage());
             return $this;
         }
+
+        //初始化Page对象
         $arrPageConf = $arrInput['page_conf'];
         $objPage->init();
         if (!empty($arrPageConf)) {
@@ -170,10 +199,6 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
             $objPage->setConf($arrPageConf);
         }
 
-        if (empty($this->_arrFetchJobs)) {
-            Phpfetcher_Log::warning("No fetch jobs.");
-            return $this;
-        }
         //遍历任务队列
         foreach ($this->_arrFetchJobs as $job_name => $job_rules) {
             if (!($this->_isJobValid($job_rules))) {
@@ -190,7 +215,9 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
             );
 
             //开始爬取
-            while ($intDepth < $job_rules['max_depth'] && ($job_rules['max_pages'] === -1 || $intPageNum < $job_rules['max_pages'])) {
+            while (!empty($arrJobs[$arrIndice[0]])
+                && ($job_rules['max_depth'] === -1 || $intDepth < $job_rules['max_depth']) 
+                && ($job_rules['max_pages'] === -1 || $intPageNum < $job_rules['max_pages'])) {
                 $intDepath += 1;
                 $intPopIndex = $arrIndice[0];
                 $intPushIndex = $arrIndice[1];
@@ -203,7 +230,7 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
                     $objPage->read();
 
                     //获取所有的超链接
-                    $arrLinks = $page->getHyperLinks();
+                    $arrLinks = $objPage->getHyperLinks();
                     
                     //匹配超链接
                     foreach ($job_rules['link_rules'] as $link_rule) {
@@ -224,13 +251,30 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
         return $this;
     }
 
+    protected function _correctJobParam(&$job_rules) {
+        /*
+        foreach (self::$arrJobDefaultFields as $field => $value) {
+            if (!isset($job_rules[$field]) || ($job_rules['']))
+        }
+         */
+        if (!isset($job_rules['max_depth']) || (self::MAX_DEPTH !== -1 && self::MAX_DEPTH < $job_rules['max_depth'])) {
+            $job_rules['max_depth'] = self::MAX_DEPTH;
+        }
+
+        if (!isset($job_rules['max_pages']) || (self::MAX_PAGE_NUM !== -1 && self::MAX_PAGE_NUM < $job_rules['max_pages'])) {
+            $job_rules['max_pages'] = self::MAX_PAGE_NUM;
+        }
+    }
+
     /**
      * @author xuruiqi
      * @desc check if a rule is valid
      */
     protected function _isJobValid($arrRule) {
-        if (empty($arrRule['start_page']) || !is_array($arrRule['link_rules']) || empty($arrRule['link_rules'])) {
-            return FALSE;
+        foreach (self::$arrJobFieldTypes as $field => $type) {
+            if (!isset($arrRule[$field]) || ($type === self::ARR_TYPE && !is_array($arrRule[$field]))) {
+                return FALSE;
+            }
         }
         return TRUE;
     }

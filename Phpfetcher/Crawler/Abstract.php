@@ -21,7 +21,7 @@ abstract class Phpfetcher_Crawler_Abstract {
     abstract function getFetchJobs();
 
     //对于每次爬取到的页面，进行的操作，这个方法需要使用者自己实现
-    abstract function handlePage(/*Phpfetcher_Page_Abstract*/);
+    abstract function handlePage($objPage);
 
     /*
     //修改一条已有的规则
