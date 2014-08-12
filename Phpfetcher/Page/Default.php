@@ -103,7 +103,7 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
 
     public function getHyperLinks() {
         $arrLinks = array();
-        $this->xpath('//a/@href');
+        $res = $this->xpath('//a/@href');
         for($i = 0; $i < $res->length;++$i) {
             $arrLinks[] = $res->item($i)->nodeValue;
         }
@@ -311,7 +311,7 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
         if ($this->_strContent != FALSE) {
 
             $this->_dom = new DOMDocument();
-            if ($this->_dom->loadHTML($this->_strContent) == FALSE) {
+            if (@$this->_dom->loadHTML($this->_strContent) == FALSE) {
                 Phpfetcher_Log::warning('Failed to call $this->_dom->loadHTML');
                 $this->_dom      = NULL;
                 $this->_domxpath = NULL;
