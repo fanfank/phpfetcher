@@ -242,6 +242,7 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
                     }
 
                     //由用户实现handlePage函数
+                    $objPage->setExtraInfo(array('job_name' => $job_name ));
                     $this->handlePage($objPage);
                     $intPageNum += 1;
                 } 

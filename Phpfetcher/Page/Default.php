@@ -52,6 +52,7 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
     );
 
     protected $_arrConf    = array();
+    protected $_arrExtraInfo = array();
     protected $_bolCloseCurlHandle = FALSE;
     protected $_curlHandle = NULL;
     protected $_dom        = NULL;
@@ -99,6 +100,14 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
 
     public function getContent() {
         return $this->_strContent;
+    }
+
+    public function getExtraInfo($arrInput) {
+        $arrOutput = array();
+        foreach ($arrInput as $req_key) {
+            $arrOutput[$req_key] = $this->arrExtraInfo[$req_key];
+        }
+        return $arrOutput;
     }
 
     public function getHyperLinks() {
@@ -234,6 +243,12 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
         return curl_setopt_array($this->_curlHandle, $arrCurlOpts);
     }
 
+    public function setExtraInfo($arrInput) {
+        foreach ($arrInput as $key => $val) {
+            $this->arrExtraInfo[$key] = $val;
+        }
+    }
+
     /**
      * @author xuruiqi
      * @param
@@ -329,27 +344,6 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
         }
         return $this->_strContent;
     }
-
-    /**
-     * @author xuruiqi
-     * @param
-     *      string $strPath : xpath's path
-     * @return
-     *      array : array of SimpleXMLElements objects
-     *      NULL  : if $this->_xml equals NULL
-     *      false : if error occurs
-     * @desc select corresponding content use xpath
-     */
-    /*
-    public function xpath($strPath) {
-        if ($this->_xml === NULL) {
-            Phpfetcher_Log::warning('$this->_xml is NULL!');
-            return NULL;
-        }
-
-        return $this->_xml->xpath($strPath);
-    }
-    */
 
     /**
      * @author xuruiqi
