@@ -111,9 +111,9 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
 
     public function getHyperLinks() {
         $arrLinks = array();
-        $res = $this->xpath('//a/@href');
-        for($i = 0; $i < $res->length;++$i) {
-            $arrLinks[] = $res->item($i)->nodeValue;
+        $res = $this->sel('//a');
+        foreach ($res as $node) {
+            $arrLinks[] = $node->href;
         }
         return $arrLinks;
     }

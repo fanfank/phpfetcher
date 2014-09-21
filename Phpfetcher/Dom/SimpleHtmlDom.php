@@ -1,5 +1,5 @@
 <?php
-require_once('simple_html_dom.php');
+require_once(dirname(__FILE__) . '/simple_html_dom.php');
 
 /*
  * @author xuruiqi
@@ -8,7 +8,7 @@ require_once('simple_html_dom.php');
  *         simple_html_dom's official site:
  *              http://sourceforge.net/projects/simplehtmldom
  */
-abstract class Phpfetcher_Dom_SimpleHtmlDom extends Phpfetcher_Dom_Abstract {
+class Phpfetcher_Dom_SimpleHtmlDom extends Phpfetcher_Dom_Abstract {
     protected $_dom = NULL;
 
     function __destruct() {
