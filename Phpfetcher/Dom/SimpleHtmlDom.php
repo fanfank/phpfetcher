@@ -41,11 +41,11 @@ class Phpfetcher_Dom_SimpleHtmlDom extends Phpfetcher_Dom_Abstract {
         return $this;
     }
 
-    public function sel($pattern = '', $node = NULL) {
+    public function sel($pattern = '', $idx = -1, $node = NULL) {
         if (NULL === $this->_dom) {
             return FALSE;
         }
-        return $this->_dom->find($pattern);
+        return $this->_dom->find($pattern, $idx);
     }
 
 }
