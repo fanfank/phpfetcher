@@ -1,9 +1,10 @@
 <?php
-require_once('autoload.php');
+//require_once('autoload.php');
+require_once('phpfetcher.php');
 $page = new Phpfetcher_Page_Default();
 $page->init();
 //$page->setConfField('url', 'http://tech.qq.com/a/20140715/073002.htm');
-$page->setConfField('url', 'http://blog.reetsee.com');
+$page->setConfField('url', 'http://news.qq.com/a/20140921/000030.htm');
 $page->read();
 //echo $page->getContent();
 //$DOMElement_id_oneKey = $page->selId('oneKey');
@@ -15,9 +16,9 @@ $page->read();
 //echo $DOMElement_id_oneKey->nodeValue;
 //print_r($page->xpath('//meta[@http-equiv]'));
 //var_dump($page->xpath2('//meta[@http-equiv]'));
-//$res = $page->xpath('//title');
+$res = $page->xpath('//title');
 //$res = $page->xpath('a');
-//var_dump($res->item(0)->nodeValue);
+var_dump($res->item(0)->nodeValue);
 //var_dump($res->item(1)->nodeValue);
 /*
 $arrLinks = array();
@@ -27,8 +28,8 @@ for($i = 0; $i < $res->length;++$i) {
     $arrLinks[] = $res->item($i)->nodeValue;
 }
  */
-$arrLinks = $page->getHyperLinks();
-print_r($arrLinks);
+//$arrLinks = $page->getHyperLinks();
+//print_r($arrLinks);
 
 
 

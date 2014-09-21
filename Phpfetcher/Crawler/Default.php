@@ -282,8 +282,8 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
 
     protected static function _swap(&$a, &$b) {
         $tmp = $a;
-        $b = $a;
-        $a = $tmp;
+        $a = $b;
+        $b = $tmp;
     }
 }
 ?>
