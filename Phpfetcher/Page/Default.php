@@ -127,7 +127,7 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
      * @desc get this page's URL.
      */
     public function getUrl() {
-        return $this->getConfField['url'];
+        return $this->getConfField('url');
     }
 
     /**
