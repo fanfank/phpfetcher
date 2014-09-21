@@ -12,7 +12,7 @@ class Phpfetcher_Error {
         ERR_FIELD_NOT_SET => 'Accessing a non-set field',
     );
 
-    public static getErrmsg($errcode) {
+    public static function getErrmsg($errcode) {
         return self::$_arrErrcode2Errmsg[$errcode] . "\n";
     }
 }
