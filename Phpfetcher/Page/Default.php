@@ -56,7 +56,6 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
     protected $_bolCloseCurlHandle = FALSE;
     protected $_curlHandle = NULL;
     protected $_dom        = NULL;
-    protected $_domxpath   = NULL;
     //protected $_xml        = NULL;
 
     public function __construct() {
@@ -161,6 +160,7 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
      *      NULL  : if $this->_dom equals NULL
      * @desc select spcified elements with their ids.
      */
+    /*
     public function mselId($ids) {
         if ($this->_dom === NULL) {
             Phpfetcher_Log::warning('$this->_dom is NULL!');
@@ -173,6 +173,7 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
         }
         return $arrOutput;
     }
+     */
 
     /**
      * @author xuruiqi
@@ -183,6 +184,7 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
      *      NULL  : if $this->_dom equals NULL
      * @desc select spcified elements with their tags
      */
+    /*
     public function mselTagName($tags) {
         if ($this->_dom === NULL) {
             Phpfetcher_Log::warning('$this->_dom is NULL!');
@@ -195,6 +197,7 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
         }
         return $arrOutput;
     }
+     */
     
 
     /**
@@ -326,7 +329,8 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
         $this->_strContent = curl_exec($this->_curlHandle);
         if ($this->_strContent != FALSE) {
 
-            $this->_dom = new DOMDocument();
+            /*
+            $this->_dom = new DOMDocument(); //DOMDocument's compatibility is bad
             if (@$this->_dom->loadHTML($this->_strContent) == FALSE) {
                 Phpfetcher_Log::warning('Failed to call $this->_dom->loadHTML');
                 $this->_dom      = NULL;
@@ -334,14 +338,13 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
             } else {
                 $this->_domxpath = new DOMXPath($this->_dom);
             }
+             */
 
-            /*
-            $this->_xml = simplexml_load_string($strContent);
-            if ($this->_xml == FALSE) {
-                Phpfetcher_Log::warning('simplexml_load_string returned false');
-                $this->_xml = NULL;
-            }
-            */
+            $this->_dom = new Phpfetcher_Dom_SimpleHtmlDom();
+            if (@$this->_dom->loadHTML($this->_strContent) == FALSE) {
+                Phpfetcher_Log::warning('Failed to call $this->_dom->loadHTML');
+                $this->_dom      = NULL;
+            } 
         }
         return $this->_strContent;
     }
@@ -354,20 +357,23 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
      *
      * @return
      *      DOMNodelist : DOMNodelist object
-     *      NULL  : if $this->_domxpath equals NULL
+     *      NULL  : if $this->_dom equals NULL
      *      false : if error occurs
      * @desc select corresponding content use xpath
      */
-    public function xpath($strPath, $contextnode = NULL) {
-        if ($this->_domxpath === NULL) {
+    public function sel($strPath, $contextnode = NULL) {
+        if ($this->_dom === NULL) {
             Phpfetcher_Log::warning('$this->_domxpath is NULL!');
             return NULL;
         }
 
         if ($contextnode !== NULL) {
-            $res = $this->_domxpath->query($strPath, $contextnode);
+            //$res = $this->_domxpath->query($strPath, $contextnode);
+            Phpfetcher_Log::warning('param contextnode is no use because of this function\'s inability');
+            $res = $this->_dom->sel($strPath);
         } else {
-            $res = $this->_domxpath->query($strPath);
+            //$res = $this->_domxpath->query($strPath);
+            $res = $this->_dom->sel($strPath);
         }
 
         return $res;

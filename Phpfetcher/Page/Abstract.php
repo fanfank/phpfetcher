@@ -6,8 +6,6 @@
  */
 abstract class Phpfetcher_Page_Abstract {
 
-    //protected $_arrConf    = array();
-    
     protected $_strContent = NULL;
 
     public function __construct() {
