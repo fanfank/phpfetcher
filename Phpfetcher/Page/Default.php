@@ -112,9 +112,14 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
     public function getHyperLinks() {
         $arrLinks = array();
         $res = $this->sel('//a');
+        for ($i = 0; $i < count($res); ++$i) {
+            $arrLinks[] = $res[$i]->href;
+        }
+        /*
         foreach ($res as $node) {
             $arrLinks[] = $node->href;
         }
+         */
         return $arrLinks;
     }
 
@@ -361,7 +366,7 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
      *      false : if error occurs
      * @desc select corresponding content use xpath
      */
-    public function sel($strPath, $intIndex = -1, $contextnode = NULL) {
+    public function sel($strPath, $intIndex = NULL, $contextnode = NULL) {
         if ($this->_dom === NULL) {
             Phpfetcher_Log::warning('$this->_domxpath is NULL!');
             return NULL;
