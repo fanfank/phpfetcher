@@ -105,7 +105,7 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
     public function getExtraInfo($arrInput) {
         $arrOutput = array();
         foreach ($arrInput as $req_key) {
-            $arrOutput[$req_key] = $this->arrExtraInfo[$req_key];
+            $arrOutput[$req_key] = $this->_arrExtraInfo[$req_key];
         }
         return $arrOutput;
     }
@@ -245,7 +245,7 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
 
     public function setExtraInfo($arrInput) {
         foreach ($arrInput as $key => $val) {
-            $this->arrExtraInfo[$key] = $val;
+            $this->_arrExtraInfo[$key] = $val;
         }
     }
 
