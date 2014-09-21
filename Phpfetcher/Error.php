@@ -7,9 +7,9 @@ class Phpfetcher_Error {
 
     //error messages
     protected static $_arrErrcode2Errmsg = array(
-        ERR_SUCCESS       => 'Success',    
-        ERR_INVALID_FIELD => 'Invalid field in array',
-        ERR_FIELD_NOT_SET => 'Accessing a non-set field',
+        self::ERR_SUCCESS       => 'Success',    
+        self::ERR_INVALID_FIELD => 'Invalid field in array',
+        self::ERR_FIELD_NOT_SET => 'Accessing a non-set field',
     );
 
     public static function getErrmsg($errcode) {
