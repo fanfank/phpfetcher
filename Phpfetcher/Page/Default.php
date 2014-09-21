@@ -361,7 +361,7 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
      *      false : if error occurs
      * @desc select corresponding content use xpath
      */
-    public function sel($strPath, $contextnode = NULL) {
+    public function sel($strPath, $intIndex = -1, $contextnode = NULL) {
         if ($this->_dom === NULL) {
             Phpfetcher_Log::warning('$this->_domxpath is NULL!');
             return NULL;
@@ -370,10 +370,10 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
         if ($contextnode !== NULL) {
             //$res = $this->_domxpath->query($strPath, $contextnode);
             Phpfetcher_Log::warning('param contextnode is no use because of this function\'s inability');
-            $res = $this->_dom->sel($strPath);
+            $res = $this->_dom->sel($strPath, $intIndex);
         } else {
             //$res = $this->_domxpath->query($strPath);
-            $res = $this->_dom->sel($strPath);
+            $res = $this->_dom->sel($strPath, $intIndex);
         }
 
         return $res;
