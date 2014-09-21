@@ -171,9 +171,9 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
 
         //构建Page对象
         $objPage = NULL;
-        $strPageClassName = strval($arrInput['page_class_name']);
-        if (empty($strPageClassName)) {
-            $strPageClassName = self::DEFAULT_PAGE_CLASS;
+        $strPageClassName = self::DEFAULT_PAGE_CLASS;
+        if (!empty($arrInput['page_class_name'])) {
+            $strPageClassName = strval($arrInput['page_class_name']);
         }
         try {
             if (!class_exists($strPageClassName, TRUE)) {
@@ -190,7 +190,7 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
         }
 
         //初始化Page对象
-        $arrPageConf = $arrInput['page_conf'];
+        $arrPageConf = empty($arrInput['page_conf']) ? array() : $arrInput['page_conf'];
         $objPage->init();
         if (!empty($arrPageConf)) {
             if(isset($arrPageConf['url'])) {
@@ -218,7 +218,7 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
             while (!empty($arrJobs[$arrIndice[0]])
                 && ($job_rules['max_depth'] === -1 || $intDepth < $job_rules['max_depth']) 
                 && ($job_rules['max_pages'] === -1 || $intPageNum < $job_rules['max_pages'])) {
-                $intDepath += 1;
+                $intDepth += 1;
                 $intPopIndex = $arrIndice[0];
                 $intPushIndex = $arrIndice[1];
                 $arrJobs[$intPushIndex] = array();
