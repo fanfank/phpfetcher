@@ -22,7 +22,7 @@ class Phpfetcher_Dom_SimpleHtmlDom extends Phpfetcher_Dom_Abstract {
         if (method_exists($this->_dom, $strMethodName)) {
             return $this->_dom->getElementById($id);
         } else {
-            Phpfetcher_Error::warning("method $strMethodName not exists");
+            Phpfetcher_Log::warning("method $strMethodName not exists");
             return FALSE;
         }
     }
@@ -32,7 +32,7 @@ class Phpfetcher_Dom_SimpleHtmlDom extends Phpfetcher_Dom_Abstract {
         if (method_exists($this->_dom, $strMethodName)) {
             return $this->_dom->getElementsByTagName($tag);
         } else {
-            Phpfetcher_Error::warning("method $strMethodName not exists");
+            Phpfetcher_Log::warning("method $strMethodName not exists");
             return FALSE;
         }
     }
@@ -56,7 +56,7 @@ class Phpfetcher_Dom_SimpleHtmlDom extends Phpfetcher_Dom_Abstract {
         if (method_exists($this->_dom, $strMethodName)) {
             return $this->_dom->find($pattern, $idx);
         } else {
-            Phpfetcher_Error::warning("method $strMethodName not exists");
+            Phpfetcher_Log::warning("method $strMethodName not exists");
             return FALSE;
         }
     }
