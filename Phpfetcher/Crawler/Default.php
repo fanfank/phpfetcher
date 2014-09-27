@@ -289,7 +289,7 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
         $b = $tmp;
     }
 
-    public static function getHash($strRawKey) {
+    public function getHash($strRawKey) {
         $strRawKey = strval($strRawKey);
         $strKey = md5($strRawKey);
         if (isset($this->_arrHash[$strKey])) {
@@ -298,13 +298,13 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
         return NULL;
     }
 
-    public static function setHash($strRawKey, $value) {
+    public function setHash($strRawKey, $value) {
         $strRawKey = strval($strRawKey);
         $strKey = md5($strRawKey);
         $this->_arrHash[$strKey] = $value;
     }
 
-    public static function clearHash() {
+    public function clearHash() {
         $this->_arrHash = array();
     }
 }
