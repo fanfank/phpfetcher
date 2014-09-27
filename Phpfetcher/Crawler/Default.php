@@ -34,6 +34,7 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
 
 
     protected $_arrFetchJobs = array();
+    protected $_arrHash = array();
     //protected $_objPage = NULL; //Phpfetcher_Page_Default;
 
     /**
@@ -235,7 +236,9 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
                     //匹配超链接
                     foreach ($job_rules['link_rules'] as $link_rule) {
                         foreach ($arrLinks as $link) {
-                            if (preg_match($link_rule, $link) === 1) {
+                            if (preg_match($link_rule, $link) === 1
+                            && $this->getHash($link)) {
+                                $this->setHash($link, true);
                                 $arrJobs[$intPushIndex][] = $link;
                             }
                         }
@@ -284,6 +287,25 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
         $tmp = $a;
         $a = $b;
         $b = $tmp;
+    }
+
+    public static function getHash($strRawKey) {
+        $strRawKey = strval($strRawKey);
+        $strKey = md5($strRawKey);
+        if (isset($this->_arrHash[$strKey])) {
+            return $this->_arrHash[$strKey];
+        }
+        return NULL;
+    }
+
+    public static function setHash($strRawKey, $value) {
+        $strRawKey = strval($strRawKey);
+        $strKey = md5($strRawKey);
+        $this->_arrHash[$strKey] = $value;
+    }
+
+    public static function clearHash() {
+        $this->_arrHash = array();
     }
 }
 ?>
