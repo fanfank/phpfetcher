@@ -18,17 +18,21 @@ class Phpfetcher_Dom_SimpleHtmlDom extends Phpfetcher_Dom_Abstract {
     }
 
     public function getElementById($id) {
-        if (method_exists($this->_dom, 'getElementById')) {
+        $strMethodName = 'getElementById';
+        if (method_exists($this->_dom, $strMethodName)) {
             return $this->_dom->getElementById($id);
         } else {
+            Phpfetcher_Error::warning("method $strMethodName not exists");
             return FALSE;
         }
     }
 
     public function getElementsByTagName($tag) {
-        if (method_exists($this->_dom, 'getELementsByTagName')) {
+        $strMethodName = 'getElementsByTagName';
+        if (method_exists($this->_dom, $strMethodName)) {
             return $this->_dom->getElementsByTagName($tag);
         } else {
+            Phpfetcher_Error::warning("method $strMethodName not exists");
             return FALSE;
         }
     }
@@ -48,9 +52,11 @@ class Phpfetcher_Dom_SimpleHtmlDom extends Phpfetcher_Dom_Abstract {
     }
 
     public function sel($pattern = '', $idx = NULL, $node = NULL) {
-        if (method_exists($this->_dom, 'find')) {
+        $strMethodName = 'find';
+        if (method_exists($this->_dom, $strMethodName)) {
             return $this->_dom->find($pattern, $idx);
         } else {
+            Phpfetcher_Error::warning("method $strMethodName not exists");
             return FALSE;
         }
     }
