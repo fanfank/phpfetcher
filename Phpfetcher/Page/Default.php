@@ -333,6 +333,12 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
     public function read() {
         $this->_strContent = curl_exec($this->_curlHandle);
         if ($this->_strContent != FALSE) {
+            $matches = array();
+            preg_match('#charset="?([a-zA-Z0-9-\._]+)"?#', $this->_strContent, $matches);
+            if (!empty($matches[1])) {
+                echo "Convert content from {$matches[1]} to UTF-8\n";
+                $this->_strContent = mb_convert_encoding($this->_strContent, 'UTF-8', $matches[1]);
+            }
 
             /*
             $this->_dom = new DOMDocument(); //DOMDocument's compatibility is bad
