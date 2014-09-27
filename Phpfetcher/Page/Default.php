@@ -336,7 +336,7 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
             $matches = array();
             preg_match('#charset="?([a-zA-Z0-9-\._]+)"?#', $this->_strContent, $matches);
             if (!empty($matches[1])) {
-                echo "Convert content from {$matches[1]} to UTF-8\n";
+                //Phpfetcher_Log::notice("Convert content from {$matches[1]} to UTF-8\n");
                 $this->_strContent = mb_convert_encoding($this->_strContent, 'UTF-8', $matches[1]);
             }
 
