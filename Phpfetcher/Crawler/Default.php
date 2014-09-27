@@ -237,7 +237,7 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
                     foreach ($job_rules['link_rules'] as $link_rule) {
                         foreach ($arrLinks as $link) {
                             if (preg_match($link_rule, $link) === 1
-                            && $this->getHash($link)) {
+                            && !$this->getHash($link)) {
                                 $this->setHash($link, true);
                                 $arrJobs[$intPushIndex][] = $link;
                             }
