@@ -49,6 +49,7 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
             'return_transfer' => 1,   //need this
             'timeout'         => 15,
             'url'             => NULL,
+            'user_agent'      => 'phpfetcher'
     );
 
     protected $_arrConf    = array();
@@ -374,7 +375,7 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
      */
     public function sel($strPath, $intIndex = NULL, $contextnode = NULL) {
         if ($this->_dom === NULL) {
-            Phpfetcher_Log::warning('$this->_domxpath is NULL!');
+            Phpfetcher_Log::warning('$this->_dom is NULL!');
             return NULL;
         }
 

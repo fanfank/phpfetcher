@@ -1,4 +1,8 @@
 <?php
+//下面两行使得这个项目被下载下来后本文件能直接运行
+//$demo_include_path = dirname(__FILE__) . '/../';
+//set_include_path(get_include_path() . PATH_SEPARATOR . $demo_include_path);
+
 require_once('phpfetcher.php');
 class mycrawler extends Phpfetcher_Crawler_Default {
     public function handlePage($page) {
