@@ -19,3 +19,4 @@ rm -rf Phpfetcher phpfetcher.php
 cp $OUTPUT_FILE $DEPLOY_PATH/
 cd $DEPLOY_PATH
 tar zxvf $OUTPUT_FILE
+rm -rf $OUTPUT_FILE
