@@ -2,6 +2,7 @@
 /*
  * @author xuruiqi
  * @date   2014.09.21
+ * @copyright reetsee.com
  * @desc   Dom's abstract class
  */
 abstract class Phpfetcher_Dom_Abstract {

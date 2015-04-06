@@ -1,4 +1,9 @@
 <?php
+/*
+ * @author xuruiqi
+ * @date   20150406
+ * @copyright reetsee.com
+ */     
 class Phpfetcher_Error {
     //error codes
     const ERR_SUCCESS = 0;

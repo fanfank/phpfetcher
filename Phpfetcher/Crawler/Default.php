@@ -2,6 +2,7 @@
 /*
  * @author xuruiqi
  * @date 2014-07-17
+ * @copyright reetsee.com
  * @desc 爬虫对象的默认类
  *       Crawler objects' default class
  */

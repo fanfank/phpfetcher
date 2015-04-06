@@ -2,6 +2,7 @@
 /*
  * @author xuruiqi
  * @date 2014-07-17
+ * @copyright reetsee.com
  * @desc 爬虫对象的抽象类
  *       Crawler objects' abstract class
  */

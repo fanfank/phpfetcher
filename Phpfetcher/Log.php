@@ -1,4 +1,9 @@
 <?php
+/*
+ * @author xuruiqi
+ * @date   20150406
+ * @copyright reetsee.com
+ */     
 class Phpfetcher_Log {
     const LOG_LEVEL_DEBUG   = 1;
     const LOG_LEVEL_NOTICE  = 2;
@@ -23,7 +28,6 @@ class Phpfetcher_Log {
         $strMsg = strval($strMsg);
         self::_print(self::LOG_LEVEL_WARNING, $strMsg, $intTraceLevel);
     }
-
 
     static public function fatal($strMsg, $intTraceLevel = 0) {
         $strMsg = strval($strMsg);

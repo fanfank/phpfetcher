@@ -4,6 +4,7 @@ require_once(dirname(__FILE__) . '/simple_html_dom.php');
 /*
  * @author xuruiqi
  * @date   2014.09.21
+ * @copyright reetsee.com
  * @desc   a dom implementation via simple_html_dom
  *         simple_html_dom's official site:
  *              http://sourceforge.net/projects/simplehtmldom

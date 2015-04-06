@@ -2,6 +2,7 @@
 /*
  * @author xuruiqi
  * @date   2014.06.28
+ * @copyright reetsee.com
  * @desc Default Page class
  */
 class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
