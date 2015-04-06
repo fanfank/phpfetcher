@@ -12,7 +12,7 @@ abstract class Phpfetcher_Crawler_Abstract {
     //protected $_arrExtraInfo = array();
 
     //设置爬虫的爬取规则
-    abstract function setFetchJobs($arrInput);
+    abstract function &setFetchJobs($arrInput = array());
 
     //删除一条已有的爬取规则
     public function delFetchJobs($arrInput) {
@@ -55,6 +55,6 @@ abstract class Phpfetcher_Crawler_Abstract {
      */
 
     //运行爬虫
-    abstract function run($arrInput = array());
+    abstract function &run($arrInput = array());
 }
 ?>
