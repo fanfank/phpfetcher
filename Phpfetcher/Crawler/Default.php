@@ -36,6 +36,7 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
 
     protected $_arrFetchJobs = array();
     protected $_arrHash = array();
+    protected $_arrAdditionalUrls = array();
     //protected $_objPage = NULL; //Phpfetcher_Page_Default;
 
     /**
@@ -250,6 +251,14 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
                     $this->handlePage($objPage);
                     $intPageNum += 1;
                 } 
+
+                if (!empty(self::$_arrAdditionalUrls)) {
+                    $arrJobs[$intPushIndex] = 
+                            array_merge($arrJobs[$intPushIndex], 
+                                self::$_arrAdditionalUrls); 
+                    self::$_arrAdditionalUrls = array();
+                }
+
                 self::_swap($arrIndice[0], $arrIndice[1]);
             }
         }
@@ -305,8 +314,47 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
         $this->_arrHash[$strKey] = $value;
     }
 
+    public function setHashIfNotExist($strRawKey, $value) {
+        $strRawKey = strval($strRawKey);
+        $strKey = md5($strRawKey);
+
+        $bolExist = true;
+        if (!isset($this->_arrHash[$strKey])) {
+            $this->_arrHash[$strKey] = $value;
+            $bolExist = false;
+        }
+
+        return $bolExist;
+    }
+
     public function clearHash() {
         $this->_arrHash = array();
+    }
+
+    /**
+     * @author xuruiqi
+     * @param
+            string/array $url //待添加的url
+     * @return
+            int $intAddedNum //实际添加的url数
+     * @desc 允许用户任何时候调用该函数，使得添加的url在下一层一定会被爬取到，除非爬取深度超出设置的值
+     */
+    public function addAdditionalUrls($url) {
+        if (!is_array($url)) {
+            $url = array($url);
+        }
+
+        $intAddedNum = 0;
+        foreach ($url as $strUrl) {
+            $strUrl = strval($strUrl);
+
+            if ($this->setHashIfNotExist($strUrl, true) === false) {
+                $this->_arrAdditionalUrls[] = $strUrl;
+                ++$intAddedNum;
+            }
+        }
+
+        return $intAddedNum;
     }
 }
 ?>
