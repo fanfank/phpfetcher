@@ -251,11 +251,11 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
                     $intPageNum += 1;
                 } 
 
-                if (!empty(self::$_arrAdditionalUrls)) {
+                if (!empty($this->_arrAdditionalUrls)) {
                     $arrJobs[$intPushIndex] = 
                             array_merge($arrJobs[$intPushIndex], 
-                                self::$_arrAdditionalUrls); 
-                    self::$_arrAdditionalUrls = array();
+                                $this->_arrAdditionalUrls); 
+                    $this->_arrAdditionalUrls = array();
                 }
 
                 self::_swap($arrIndice[0], $arrIndice[1]);
@@ -331,23 +331,21 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
     }
 
     public function addAdditionalUrls($url) {
-        echo "hi2\n";
-        return 0;
-        //if (!is_array($url)) {
-        //    $url = array($url);
-        //}
+        if (!is_array($url)) {
+            $url = array($url);
+        }
 
-        //$intAddedNum = 0;
-        //foreach ($url as $strUrl) {
-        //    $strUrl = strval($strUrl);
+        $intAddedNum = 0;
+        foreach ($url as $strUrl) {
+            $strUrl = strval($strUrl);
 
-        //    if ($this->setHashIfNotExist($strUrl, true) === true) {
-        //        $this->_arrAdditionalUrls[] = $strUrl;
-        //        ++$intAddedNum;
-        //    }
-        //}
+            if ($this->setHashIfNotExist($strUrl, true) === false) {
+                $this->_arrAdditionalUrls[] = $strUrl;
+                ++$intAddedNum;
+            }
+        }
 
-        //return $intAddedNum;
+        return $intAddedNum;
     }
 };
 ?>
