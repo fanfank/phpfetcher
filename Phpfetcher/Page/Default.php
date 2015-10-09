@@ -50,7 +50,7 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
             'return_transfer' => 1,   //need this
             'timeout'         => 15,
             'url'             => NULL,
-            'user_agent'      => 'phpfetcher'
+            'user_agent'      => 'firefox'
     );
 
     protected $_arrConf    = array();
