@@ -11,7 +11,7 @@ class mycrawler extends Phpfetcher_Crawler_Default {
         for ($i = 0; $i < count($res); ++$i) {
             echo $res[$i]->plaintext;
             echo "\n";
-            echo $res[$i]->getAttribute("href");
+            echo $res[$i]->getAttribute('href');
             echo "\n";
             echo "\n";
         }
