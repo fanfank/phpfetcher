@@ -1,5 +1,8 @@
 #Phpfetcher    
 
+##重要修改记录 - Important Improvements Log   
+2015-10-26 可以爬取网站内链（如"/entry"的超链接）。 Able to crawl website internal hyper links(say "/entry").      
+
 ##中文说明(Scroll Down to See The English Description)    
 一个PHP爬虫框架   
 框架的起源请参见：http://blog.reetsee.com/archives/366        
@@ -279,4 +282,6 @@ There are still lots of imperfect sides of Phpfetcher, including multi-threading
 But that is probably what makes this framework easy to learn, to maintain.
 I will not deny that there are many designing problems despite of the lack of features, and I will push the project forward once more and more developers demand more and more necessary features.
 Until now, this framework meets most of the demands of its little user group.
-I hope you enjoy using Phpfetcher!
+I hope you enjoy using Phpfetcher!     
+
+

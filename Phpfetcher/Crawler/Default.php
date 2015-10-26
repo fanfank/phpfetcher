@@ -36,7 +36,17 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
     protected $_arrFetchJobs = array();
     protected $_arrHash = array();
     protected $_arrAdditionalUrls = array();
+    protected $_objSchemeTrie = array(); //合法url scheme的字典树
     //protected $_objPage = NULL; //Phpfetcher_Page_Default;
+
+    public function __construct($arrInitParam = array()) {
+        if (!isset($arrInitParam['url_schemes'])) {
+            $arrInitParam['url_schemes'] = array("http", "https", "ftp");
+        }
+
+        $this->_objSchemeTrie = 
+                new Phpfetcher_Util_Trie($arrInitParam['url_schemes']);
+    }
 
     /**
      * @author xuruiqi
@@ -220,6 +230,7 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
             while (!empty($arrJobs[$arrIndice[0]])
                 && ($job_rules['max_depth'] === -1 || $intDepth < $job_rules['max_depth']) 
                 && ($job_rules['max_pages'] === -1 || $intPageNum < $job_rules['max_pages'])) {
+
                 $intDepth += 1;
                 $intPopIndex = $arrIndice[0];
                 $intPushIndex = $arrIndice[1];
@@ -232,15 +243,55 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
                     $objPage->read();
 
                     //获取所有的超链接
-                    $arrLinks = $objPage->getHyperLinks();
+                    $arrLinks  = $objPage->getHyperLinks();
+
+                    //解析当前URL的各个组成部分，以应对超链接中存在站内链接
+                    //的情况，如"/entry"等形式的URL
+                    $strCurUrl = $objPage->getUrl();
+                    $arrUrlComponents = parse_url($strCurUrl);
                     
                     //匹配超链接
                     foreach ($job_rules['link_rules'] as $link_rule) {
                         foreach ($arrLinks as $link) {
+                            //if (preg_match($link_rule, $link) === 1
+                            //        && !$this->getHash($link)) {
+                            //    $this->setHash($link, true);
+                            //    $arrJobs[$intPushIndex][] = $link;
+                            //}
                             if (preg_match($link_rule, $link) === 1
-                            && !$this->getHash($link)) {
+                                    && !$this->getHash($link)) {
+
+                                //拼出实际的URL
+                                $real_link = $link;
+
+                                //不使用strpos，防止扫描整个字符串
+                                //这里只需要扫描前6个字符即可
+                                $colon_pos = false;
+                                for ($i = 0; $i <= 5; ++$i) {
+                                    if ($link[$i] == ':') {
+                                        $colon_pos = $i;
+                                        break;
+                                    }
+                                }
+
+                                if ($colon_pos === false
+                                        || !$this->_objSchemeTrie->has(
+                                            substr($link, 0, $colon_pos))) {
+                                    //将站内地址转换为完整地址
+                                    $real_link = $arrUrlComponents['scheme']
+                                            . "://"
+                                            . $arrUrlComponents['host']
+                                            . (isset($arrUrlComponents['port'])
+                                                && strlen($arrUrlComponents['port']) != 0 ?
+                                                    ":{$arrUrlComponents['port']}" :
+                                                    "")
+                                            . ($link[0] == '/' ?
+                                                $link : "/$link");
+                                }
+
                                 $this->setHash($link, true);
-                                $arrJobs[$intPushIndex][] = $link;
+                                $this->setHash($real_link, true);
+                                $arrJobs[$intPushIndex][] = $real_link;
                             }
                         }
                     }
