@@ -52,7 +52,14 @@ class Phpfetcher_Dom_SimpleHtmlDom extends Phpfetcher_Dom_Abstract {
         return $this;
     }
 
+    /**
+     * @deprecated
+     */
     public function sel($pattern = '', $idx = NULL, $node = NULL) {
+        return $this->find($pattern, $idx);
+    }
+
+    public function find($pattern = '', $idx = NULL) {
         $strMethodName = 'find';
         if (method_exists($this->_dom, $strMethodName)) {
             return $this->_dom->find($pattern, $idx);
