@@ -1,12 +1,14 @@
 #Phpfetcher    
 
 ##重要修改记录 - Important Improvements Log   
+2016-03-26 PHP7测试通过。 Have PHP7 tested.
 2015-10-26 可以爬取网站内链（如"/entry"的超链接）。 Able to crawl website internal hyper links(say "/entry").      
 
 ##中文说明(Scroll Down to See The English Description)    
 一个PHP爬虫框架   
 框架的起源请参见：http://blog.reetsee.com/archives/366        
-注意：PHP 5.4.x可能有BUG以至于有时候执行iframe_example.php出错，如果出现这种情况，请尝试PHP 5.5.x    
+PHP需要启用curl扩展以及mbstring扩展         
+支持PHP5，PHP7         
 ###1 例子    
 下面的所有例子请在`demo`目录下执行，即假设例子对应的文件名是`hello_world.php`，运行例子时你执行的命令应该是`php hello_world.php`而不是`php demo/hello_world.php`
 ####1.1 获取页面中`<title>`标签的内容
@@ -116,7 +118,7 @@ http://www.baidu.com/link?url=g7e5dKdgTPcIKOwybAPc7mk7omwz94u0xWuZ_9-nS1AGfdotyd
 ###2 获取HTML页面中某个元素的所有信息
 可以参考例子1.3以及1.4，实际上主要使用以下四样东西：    
 1. xpath，它是用来描述你要查找的HTML标签的语句，可以参考[http://www.w3school.com.cn/xpath/](http://www.w3school.com.cn/xpath/)；    
-2. `sel`方法，如所有例子中都有的`$page->sel('xpath语句')`，调用这个方法后会得到一个数组，数组的内容就是所有满足要求的DOM元素的实例；     
+2. `find`方法，如所有例子中都有的`$page->find('xpath语句')`，调用这个方法后会得到一个数组，数组的内容就是所有满足要求的DOM元素的实例；     
 3. simplehtmldom的`plaintext`成员，例如例子中的`$res[$i]->plaintext`，保存着DOM元素包裹的文本内容；    
 4. simplehtmldom的`getAttribute`方法，例如例子`crawl_baidu_page.php`中的`$res[$i]->getAttribute('href')`，这样你就可以获得对应元素的属性值了。    
 基本上熟悉了上面四点，你就能较好地在Phpfetcher中操控DOM元素。
@@ -146,7 +148,8 @@ Phpfetcher解析HTML时使用了simplehtmldom这个开源项目的内容，更�
 ##English Description    
 A PHP web crawler framework        
 The origin of this framework please refer to: http://blog.reetsee.com/archives/366      
-NOTE: PHP 5.4.x may have bugs that sometimes iframe_example.php doesn't work, if so, try PHP 5.5.x     
+PHP need to be compiled with curl and mbstring extentions         
+PHP5, PHP7 are supported      
 ###1 Examples
 Please run the following examples under `demo` directory, assume you want to run `hello_world.php`, use `php hellow_world.php` rather than `php demo/hello_world.php`.
 ####1.1 Get Plaintext of `<title>` Tags
@@ -256,7 +259,7 @@ http://www.baidu.com/link?url=g7e5dKdgTPcIKOwybAPc7mk7omwz94u0xWuZ_9-nS1AGfdotyd
 ###2 Get All The Infomation of An HTML Tag
 Please use example 1.3 and 1.4 as references. Actually you mainly have to know the following four techniques:    
 1. xpath, it is used to describe what kind of HTML tag you are looking for, learn more about xpath: [www.w3schools.com/xsl/xpath_syntax.asp](www.w3schools.com/xsl/xpath_syntax.asp);    
-2. `sel` method, all the examples above use `$page->sel('xpath query')`, after calling this method you will get an array, which will contain all the qualified DOM elements;    
+2. `find` method, all the examples above use `$page->find('xpath query')`, after calling this method you will get an array, which will contain all the qualified DOM elements;    
 3. Member `plaintext` of simplehtmldom, say `$res[$i]->plaintext`, which stores plain text that the DOM element wraps;    
 4. Method `getAttribute` of simplehtmldom, say `$res[$i]->getAttribute('href')` in the `crawl_baidu_page.php` example, from which you can get the attribute of the specified tag.    
 Generally speaking, once you are familiar with the above four, you handle DOMs in Phpfetcher well.
@@ -284,4 +287,6 @@ I will not deny that there are many designing problems despite of the lack of fe
 Until now, this framework meets most of the demands of its little user group.
 I hope you enjoy using Phpfetcher!     
 
-
+##TODO         
+1. 支持配置爬虫使用的HTTP头以及Cookies。 To support configuring the HTTP Headers and Cookies for the crawlers.    
+2. 支持协程/多线程调度爬虫。 To support coroutine/multi-thread crawlers.     
