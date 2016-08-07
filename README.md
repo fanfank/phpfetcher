@@ -1,6 +1,8 @@
 #Phpfetcher - a simple web crawler framework    
 
 ##重要修改记录 - Important Improvements Log   
+2016-08-08  支持对爬虫设置Header。    
+            Crawlers with Headers supported.    
 2016-03-26　PHP7测试通过。   
 　　　　　　Have PHP7 tested.        
 2015-10-26　可以爬取网站内链（如"/entry"的超链接）。    
@@ -117,6 +119,19 @@ http://www.baidu.com/link?url=LDR4I-ZA2VI4YuVk-hLH_SvxNwcynRZJ6qtD1go0wc68Q08viP
 为什么中国出不了Facebook和Twitter?-月光博客
 http://www.baidu.com/link?url=g7e5dKdgTPcIKOwybAPc7mk7omwz94u0xWuZ_9-nS1AGfdotydkziu7vqCRbrVK0T6rTCUSA3Al5mL4Rcl7YY_
 ```    
+####1.5 为你的爬虫添加HTTP Headers
+有时候某些网站必须要求登录用户才能查看内容，或者需要用户的Header里的某些信息校验通过后（例如Cookie），才能进行浏览。我们可以为爬虫添加HTTP Header，使得网页可以被爬取到。    
+请运行`crawl_with_headers.php`，这个程序会打印简历页面的标题，得到的输出如下：    
+```
+$> php crawl_with_headers.php
+【吴文博简历】 - 出纳简历 - 58同城
+```    
+如果你运行时出现以下错误：   
+```
+2016-08-07 16:33:17 Default.php Phpfetcher_Page_Default sel 116 Warning:  $this->_dom is NULL!
+2016-08-07 16:33:17 crawl_with_headers.php Phpfetcher_Page_Default sel 10 Warning:  $this->_dom is NULL!
+```     
+请将文件中的`http_header`数组替换成你的浏览器访问这个网页时的Request HEADER，然后再尝试几次。注意：`Accept-Encoding`这个Header不要添加进去。    
 ###2 获取HTML页面中某个元素的所有信息
 可以参考例子1.3以及1.4，实际上主要使用以下四样东西：    
 1. xpath，它是用来描述你要查找的HTML标签的语句，可以参考[http://www.w3school.com.cn/xpath/](http://www.w3school.com.cn/xpath/)；    
@@ -258,6 +273,20 @@ http://www.baidu.com/link?url=LDR4I-ZA2VI4YuVk-hLH_SvxNwcynRZJ6qtD1go0wc68Q08viP
 为什么中国出不了Facebook和Twitter?-月光博客
 http://www.baidu.com/link?url=g7e5dKdgTPcIKOwybAPc7mk7omwz94u0xWuZ_9-nS1AGfdotydkziu7vqCRbrVK0T6rTCUSA3Al5mL4Rcl7YY_
 ```    
+####1.5 Add HTTP Headers For Your Crawlers
+Sometimes websites only allow logined users to access, or sometimes websites display different content according to HTTP Request Headers.    
+We can manually add Headers to our crawlers so that we can fetch the expected content.    
+Please run `crawl_with_headers.php`, this demo will print the title of the page, which outputs:    
+```
+$> php crawl_with_headers.php
+【吴文博简历】 - 出纳简历 - 58同城
+```    
+If you encouter the following errors:    
+```
+2016-08-07 16:33:17 Default.php Phpfetcher_Page_Default sel 116 Warning:  $this->_dom is NULL!
+2016-08-07 16:33:17 crawl_with_headers.php Phpfetcher_Page_Default sel 10 Warning:  $this->_dom is NULL!
+```     
+Please replace `http_header` array in the file with your own Request HEADER, then try a few times. Warning: `Accept-Encoding` Header should not be added.    
 ###2 Get All The Infomation of An HTML Tag
 Please use example 1.3 and 1.4 as references. Actually you mainly have to know the following four techniques:    
 1. xpath, it is used to describe what kind of HTML tag you are looking for, learn more about xpath: [www.w3schools.com/xsl/xpath_syntax.asp](www.w3schools.com/xsl/xpath_syntax.asp);    
