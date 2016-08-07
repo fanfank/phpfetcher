@@ -1,8 +1,8 @@
 #Phpfetcher - a simple web crawler framework    
 
 ##重要修改记录 - Important Improvements Log   
-2016-08-08  支持对爬虫设置Header。    
-            Crawlers with Headers supported.    
+2016-08-08　支持对爬虫设置Header。    
+　　　　　　Crawlers with Headers supported.    
 2016-03-26　PHP7测试通过。   
 　　　　　　Have PHP7 tested.        
 2015-10-26　可以爬取网站内链（如"/entry"的超链接）。    
