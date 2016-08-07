@@ -218,6 +218,11 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
                 continue;
             }
 
+            //检查是否需要设置curl配置
+            if (!empty($job_rules['page_conf'])) {
+                $objPage->setConf($job_rules['page_conf']);
+            }
+
             $intDepth   = 0;
             $intPageNum = 0;
             $arrIndice = array(0, 1);

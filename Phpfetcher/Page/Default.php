@@ -325,6 +325,28 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
     }
 
     /**
+     * @author  xuruiqi
+     * @param
+     *      array $arrHeaderList : header list
+     *      e.g.
+     *          array(
+     *              ...
+     *              "Cookie: xxxxx",
+     *              ...
+     *              "Header_n: header_n_value",
+     *          )
+     * @return
+     *      this
+     * @desc set header of the next fetch
+     */
+    public function &setHeaders($arrHeaderList) {
+        $this->setConf(array(
+            "http_header" => $arrHeaderList
+        ));
+        return $this;
+    }
+
+    /**
      * @author xuruiqi
      * @param
      * @return
