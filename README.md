@@ -1,8 +1,8 @@
 #Phpfetcher - a simple web crawler framework    
 
 ##重要修改记录 - Important Improvements Log   
-2016-09-08  支持HTTPS
-            Support HTTPS websites
+2016-09-08　支持HTTPS    
+　　　　　　Support HTTPS websites    
 2016-08-08　支持对爬虫设置Header。    
 　　　　　　Crawlers with Headers supported.    
 2016-03-26　PHP7测试通过。   
