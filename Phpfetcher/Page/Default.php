@@ -42,6 +42,9 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
 
         /* function or a Closure */
         'write_function'    => CURLOPT_WRITEFUNCTION,
+
+        /* https */
+        'ssl_verifypeer'    => CURLOPT_SSL_VERIFYPEER,
     );
 
     protected $_arrDefaultConf = array(
@@ -50,7 +53,8 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
             'return_transfer' => 1,   //need this
             'timeout'         => 15,
             'url'             => NULL,
-            'user_agent'      => 'firefox'
+            'user_agent'      => 'firefox',
+            'ssl_verifypeer'  => false,
     );
 
     protected $_arrConf    = array();

@@ -23,7 +23,7 @@ $arrJobs = array(
     //任务的名字随便起，这里把名字叫qqnews
     //the key is the name of a job, here names it qqnews
     'qqnews' => array( 
-        'start_page' => 'http://www.baidu.com/s?wd=facebook', //起始网页
+        'start_page' => 'https://www.baidu.com/s?wd=facebook', //起始网页
         'link_rules' => array(
             /*
              * 所有在这里列出的正则规则，只要能匹配到超链接，那么那条爬虫就会爬到那条超链接
