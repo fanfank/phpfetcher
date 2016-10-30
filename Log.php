@@ -1,10 +1,11 @@
 <?php
+namespace xiaogouxo\phpfetcher;
 /*
  * @author xuruiqi
  * @date   20150406
  * @copyright reetsee.com
  */     
-class Phpfetcher_Log {
+class Log {
     const LOG_LEVEL_DEBUG   = 1;
     const LOG_LEVEL_NOTICE  = 2;
     const LOG_LEVEL_WARNING = 3;

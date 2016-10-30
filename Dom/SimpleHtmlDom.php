@@ -1,4 +1,6 @@
 <?php
+namespace xiaogouxo\phpfetcher\Dom;
+
 require_once(dirname(__FILE__) . '/simple_html_dom.php');
 
 /*
@@ -9,7 +11,7 @@ require_once(dirname(__FILE__) . '/simple_html_dom.php');
  *         simple_html_dom's official site:
  *              http://sourceforge.net/projects/simplehtmldom
  */
-class Phpfetcher_Dom_SimpleHtmlDom extends Phpfetcher_Dom_Abstract {
+class Dom_SimpleHtmlDom extends Dom_Abstract {
     protected $_dom = NULL;
 
     function __destruct() {

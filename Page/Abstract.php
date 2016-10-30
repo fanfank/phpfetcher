@@ -1,11 +1,13 @@
 <?php
+namespace xiaogouxo\phpfetcher\Page;
 /*
  * @author xuruiqi
  * @date   2014.06.28
  * @copyright reetsee.com
  * @abstract Page's abstract class
  */
-abstract class Phpfetcher_Page_Abstract {
+
+abstract class Page_Abstract {
 
     protected $_strContent = NULL;
 

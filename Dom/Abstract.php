@@ -1,11 +1,13 @@
 <?php
+namespace xiaogouxo\phpfetcher\Dom;
 /*
  * @author xuruiqi
  * @date   2014.09.21
  * @copyright reetsee.com
  * @desc   Dom's abstract class
  */
-abstract class Phpfetcher_Dom_Abstract {
+
+abstract class Dom_Abstract {
     abstract function getElementById($id);
 
     abstract function getElementsByTagName($tag);

@@ -1,10 +1,11 @@
 <?php
+namespace xiaogouxo\phpfetcher;
 /*
  * @author xuruiqi
  * @date   20150406
  * @copyright reetsee.com
- */     
-class Phpfetcher_Error {
+ */
+class Error {
     //error codes
     const ERR_SUCCESS = 0;
     const ERR_INVALID_FIELD = 1000;

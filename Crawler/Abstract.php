@@ -1,4 +1,5 @@
 <?php
+namespace xiaogouxo\phpfetcher\Crawler;
 /*
  * @author xuruiqi
  * @date 2014-07-17
@@ -6,7 +7,10 @@
  * @desc 爬虫对象的抽象类
  *       Crawler objects' abstract class
  */
-abstract class Phpfetcher_Crawler_Abstract {
+
+use xiaogouxo\phpfetcher\Log;
+
+abstract class Crawler_Abstract {
     protected $_arrPostFetchHooks = array();
     protected $_arrPreFetchHooks  = array();
     //protected $_arrExtraInfo = array();
@@ -16,7 +20,7 @@ abstract class Phpfetcher_Crawler_Abstract {
 
     //删除一条已有的爬取规则
     public function delFetchJobs($arrInput) {
-        Phpfetcher_Log::notice('not implemented');
+        Log::notice('not implemented');
     }
 
     //查看已有的爬取规则

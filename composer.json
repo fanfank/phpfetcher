@@ -1,0 +1,20 @@
+{
+    "name": "xiaogouxo/phpfetcher",
+    "type": "library",
+    "description": "a simple php crawler",
+    "keywords": ["phpfetcher"],
+    "homepage": "https://github.com/xiaogouxo/phpfetcher",
+    "license": "BSD-3",
+    "authors": [
+        {
+            "name": "Falco Lee",
+            "email": "5493972@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "xiaogouxo\\phpfetcher\\": ""
+        }
+    }
+}
