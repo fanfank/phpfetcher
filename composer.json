@@ -11,7 +11,9 @@
             "email": "5493972@gmail.com"
         }
     ],
-    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.3.9"
+    },
     "autoload": {
         "psr-4": {
             "xiaogouxo\\phpfetcher\\": ""
