@@ -1,4 +1,5 @@
 <?php
+namespace xiaogouxo\phpfetcher\Crawler;
 /*
  * @author xuruiqi
  * @date 2014-07-17
@@ -6,14 +7,19 @@
  * @desc 爬虫对象的默认类
  *       Crawler objects' default class
  */
-abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
+
+use xiaogouxo\phpfetcher\Log;
+use xiaogouxo\phpfetcher\Page\Page;
+use xiaogouxo\phpfetcher\Util\UtilTrie;
+
+abstract class CrawlerDefault extends Crawler {
     const MAX_DEPTH = 20;
     const MAX_PAGE_NUM = -1;
     const MODIFY_JOBS_SET = 1;
     const MODIFY_JOBS_DEL = 2;
     const MODIFY_JOBS_ADD = 3;
-    const DEFAULT_PAGE_CLASS = 'Phpfetcher_Page_Default';
-    const ABSTRACT_PAGE_CLASS = 'Phpfetcher_Page_Abstract';
+    const DEFAULT_PAGE_CLASS = 'xiaogouxo\phpfetcher\Page\PageDefault';
+    const ABSTRACT_PAGE_CLASS = 'xiaogouxo\phpfetcher\Page\Page';
 
     const INT_TYPE = 1;
     const STR_TYPE = 2;
@@ -45,7 +51,7 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
         }
 
         $this->_objSchemeTrie = 
-                new Phpfetcher_Util_Trie($arrInitParam['url_schemes']);
+                new UtilTrie($arrInitParam['url_schemes']);
     }
 
     /**
@@ -141,12 +147,12 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
                 unset($this->_arrFetchJobs[$job_name]);
             }
         } else {
-            Phpfetcher_Log::warning("Unknown options for fetch jobs [{$intOptType}]");
+            Log::warning("Unknown options for fetch jobs [{$intOptType}]");
         }
 
 
         if (!empty($arrInvalidJobs)) {
-            Phpfetcher_Log::notice('Invalid jobs:' . implode(',', $arrInvalidJobs));
+            Log::notice('Invalid jobs:' . implode(',', $arrInvalidJobs));
         }
         return $this;
     }
@@ -177,7 +183,7 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
      */
     public function &run($arrInput = array()) {
         if (empty($this->_arrFetchJobs)) {
-            Phpfetcher_Log::warning("No fetch jobs.");
+            Log::warning("No fetch jobs.");
             return $this;
         }
 
@@ -189,15 +195,15 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
         }
         try {
             if (!class_exists($strPageClassName, TRUE)) {
-                throw new Exception("[$strPageClassName] class not exists!");
+                throw new \Exception("[$strPageClassName] class not exists!");
             }
 
             $objPage = new $strPageClassName;
-            if (!($objPage instanceof Phpfetcher_Page_Abstract)) {
-                throw new Exception("[$strPageClassName] is not an instance of " . self::ABSTRACT_PAGE_CLASS);
+            if (!($objPage instanceof Page)) {
+                throw new \Exception("[$strPageClassName] is not an instance of " . self::ABSTRACT_PAGE_CLASS);
             }
-        } catch (Exception $e) {
-            Phpfetcher_Log::fatal($e->getMessage());
+        } catch (\Exception $e) {
+            Log::fatal($e->getMessage());
             return $this;
         }
 
@@ -214,7 +220,7 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
         //遍历任务队列
         foreach ($this->_arrFetchJobs as $job_name => $job_rules) {
             if (!($this->_isJobValid($job_rules))) {
-                Phpfetcher_Log::warning("Job rules invalid [" . serialize($job_rules) . "]");
+                Log::warning("Job rules invalid [" . serialize($job_rules) . "]");
                 continue;
             }
 

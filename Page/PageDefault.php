@@ -1,11 +1,18 @@
 <?php
+namespace xiaogouxo\phpfetcher\Page;
+use xiaogouxo\phpfetcher\Dom\DomSimpleHtmlDom;
+use xiaogouxo\phpfetcher\Error;
+use xiaogouxo\phpfetcher\Log;
+
 /*
  * @author xuruiqi
  * @date   2014.06.28
  * @copyright reetsee.com
  * @desc Default Page class
  */
-class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
+
+
+class PageDefault extends Page {
 
     protected static $_arrField2CurlOpt = array(
         /* bool */
@@ -74,7 +81,7 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
 
     public static function formatRes($data, $errcode, $errmsg = NULL) {
         if ($errmsg === NULL) {
-            $errmsg = Phpfetcher_Error::getErrmsg($errcode);
+            $errmsg = Error::getErrmsg($errcode);
         }
         return array('errcode' => $errcode, 'errmsg' => $errmsg, 'res' => $data);
     }
@@ -97,9 +104,9 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
      */
     public function getConfField($key) {
         if (isset($this->_arrConf[$key])) {
-            return self::formatRes($this->_arrConf[$key], Phpfetcher_Error::ERR_SUCCESS);
+            return self::formatRes($this->_arrConf[$key], Error::ERR_SUCCESS);
         } else {
-            return self::formatRes(NULL, Phpfetcher_Error::ERR_FIELD_NOT_SET);
+            return self::formatRes(NULL, Error::ERR_FIELD_NOT_SET);
         }
     }
 
@@ -275,7 +282,7 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
      */
     public function selId($id) {
         if ($this->_dom === NULL) {
-            Phpfetcher_Log::warning('$this->_dom is NULL!');
+            Log::warning('$this->_dom is NULL!');
             return NULL;
         }
 
@@ -293,7 +300,7 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
      */
     public function selTagName($tag) {
         if ($this->_dom === NULL) {
-            Phpfetcher_Log::warning('$this->_dom is NULL!');
+            Log::warning('$this->_dom is NULL!');
             return NULL;
         }
 
@@ -379,9 +386,9 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
             }
              */
 
-            $this->_dom = new Phpfetcher_Dom_SimpleHtmlDom();
+            $this->_dom = new DomSimpleHtmlDom();
             if (@$this->_dom->loadHTML($this->_strContent) == FALSE) {
-                Phpfetcher_Log::warning('Failed to call $this->_dom->loadHTML');
+                Log::warning('Failed to call $this->_dom->loadHTML');
                 $this->_dom      = NULL;
             } 
         }
@@ -402,13 +409,13 @@ class Phpfetcher_Page_Default extends Phpfetcher_Page_Abstract {
      */
     public function sel($strPath, $intIndex = NULL, $contextnode = NULL) {
         if ($this->_dom === NULL) {
-            Phpfetcher_Log::warning('$this->_dom is NULL!');
+            Log::warning('$this->_dom is NULL!');
             return NULL;
         }
 
         if ($contextnode !== NULL) {
             //$res = $this->_domxpath->query($strPath, $contextnode);
-            Phpfetcher_Log::warning('param contextnode is no use because of this function\'s inability');
+            Log::warning('param contextnode is no use because of this function\'s inability');
             $res = $this->_dom->sel($strPath, $intIndex);
         } else {
             //$res = $this->_domxpath->query($strPath);

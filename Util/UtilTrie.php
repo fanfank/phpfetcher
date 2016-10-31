@@ -1,4 +1,7 @@
 <?php
+namespace xiaogouxo\phpfetcher\Util;
+
+use xiaogouxo\phpfetcher\Log;
 /*
  * @author xuruiqi
  * @date 2015-10-26
@@ -6,7 +9,8 @@
  * @desc 字典树的简单实现，没有做内存优化
  *       A simple implementation of trie without improvements on memory
  */
-class Phpfetcher_Util_Trie {
+
+class UtilTrie {
     protected $_arrTrieRoot = array();
 
     public function __construct($arrStrings = array()) {
@@ -38,8 +42,8 @@ class Phpfetcher_Util_Trie {
             $arrCurNode['count'] += 1;
             unset($arrCurNode);
 
-        } catch (Exception $e) {
-            Phpfetcher_Log::fatal($e->getMessage());
+        } catch (\Exception $e) {
+            Log::fatal($e->getMessage());
             return false;
         }
 

@@ -1,4 +1,8 @@
 <?php
+namespace xiaogouxo\phpfetcher\Dom;
+
+use xiaogouxo\phpfetcher\Log;
+
 require_once(dirname(__FILE__) . '/simple_html_dom.php');
 
 /*
@@ -9,7 +13,7 @@ require_once(dirname(__FILE__) . '/simple_html_dom.php');
  *         simple_html_dom's official site:
  *              http://sourceforge.net/projects/simplehtmldom
  */
-class Phpfetcher_Dom_SimpleHtmlDom extends Phpfetcher_Dom_Abstract {
+class DomSimpleHtmlDom extends Dom {
     protected $_dom = NULL;
 
     function __destruct() {
@@ -23,7 +27,7 @@ class Phpfetcher_Dom_SimpleHtmlDom extends Phpfetcher_Dom_Abstract {
         if (method_exists($this->_dom, $strMethodName)) {
             return $this->_dom->getElementById($id);
         } else {
-            Phpfetcher_Log::warning("method $strMethodName not exists");
+            Log::warning("method $strMethodName not exists");
             return FALSE;
         }
     }
@@ -33,7 +37,7 @@ class Phpfetcher_Dom_SimpleHtmlDom extends Phpfetcher_Dom_Abstract {
         if (method_exists($this->_dom, $strMethodName)) {
             return $this->_dom->getElementsByTagName($tag);
         } else {
-            Phpfetcher_Log::warning("method $strMethodName not exists");
+            Log::warning("method $strMethodName not exists");
             return FALSE;
         }
     }
@@ -64,7 +68,7 @@ class Phpfetcher_Dom_SimpleHtmlDom extends Phpfetcher_Dom_Abstract {
         if (method_exists($this->_dom, $strMethodName)) {
             return $this->_dom->find($pattern, $idx);
         } else {
-            Phpfetcher_Log::warning("method $strMethodName not exists");
+            Log::warning("method $strMethodName not exists");
             return FALSE;
         }
     }
