@@ -7,7 +7,7 @@ namespace xiaogouxo\phpfetcher\Dom;
  * @desc   Dom's abstract class
  */
 
-abstract class Dom_Abstract {
+abstract class Dom {
     abstract function getElementById($id);
 
     abstract function getElementsByTagName($tag);

@@ -1,6 +1,6 @@
 <?php
 namespace xiaogouxo\phpfetcher\Page;
-use xiaogouxo\phpfetcher\Dom\Dom_SimpleHtmlDom;
+use xiaogouxo\phpfetcher\Dom\DomSimpleHtmlDom;
 use xiaogouxo\phpfetcher\Error;
 use xiaogouxo\phpfetcher\Log;
 
@@ -12,7 +12,7 @@ use xiaogouxo\phpfetcher\Log;
  */
 
 
-class Page_Default extends Page_Abstract {
+class PageDefault extends Page {
 
     protected static $_arrField2CurlOpt = array(
         /* bool */
@@ -386,7 +386,7 @@ class Page_Default extends Page_Abstract {
             }
              */
 
-            $this->_dom = new Dom_SimpleHtmlDom();
+            $this->_dom = new DomSimpleHtmlDom();
             if (@$this->_dom->loadHTML($this->_strContent) == FALSE) {
                 Log::warning('Failed to call $this->_dom->loadHTML');
                 $this->_dom      = NULL;

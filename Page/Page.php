@@ -7,7 +7,7 @@ namespace xiaogouxo\phpfetcher\Page;
  * @abstract Page's abstract class
  */
 
-abstract class Page_Abstract {
+abstract class Page {
 
     protected $_strContent = NULL;
 

@@ -10,7 +10,7 @@ namespace xiaogouxo\phpfetcher\Crawler;
 
 use xiaogouxo\phpfetcher\Log;
 
-abstract class Crawler_Abstract {
+abstract class Crawler {
     protected $_arrPostFetchHooks = array();
     protected $_arrPreFetchHooks  = array();
     //protected $_arrExtraInfo = array();

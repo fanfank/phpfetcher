@@ -6,7 +6,7 @@ namespace xiaogouxo\phpfetcher\Manager;
  * @copyright reetsee.com
  */
 
-class Manager_Abstract {
+class Manager {
 
 }
 ?>

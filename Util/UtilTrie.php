@@ -10,7 +10,7 @@ use xiaogouxo\phpfetcher\Log;
  *       A simple implementation of trie without improvements on memory
  */
 
-class Util_Trie {
+class UtilTrie {
     protected $_arrTrieRoot = array();
 
     public function __construct($arrStrings = array()) {

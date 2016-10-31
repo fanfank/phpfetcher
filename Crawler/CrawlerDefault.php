@@ -9,17 +9,17 @@ namespace xiaogouxo\phpfetcher\Crawler;
  */
 
 use xiaogouxo\phpfetcher\Log;
-use xiaogouxo\phpfetcher\Page\Page_Abstract;
-use xiaogouxo\phpfetcher\Util\Util_Trie;
+use xiaogouxo\phpfetcher\Page\Page;
+use xiaogouxo\phpfetcher\Util\UtilTrie;
 
-abstract class Crawler_Default extends Crawler_Abstract {
+abstract class CrawlerDefault extends Crawler {
     const MAX_DEPTH = 20;
     const MAX_PAGE_NUM = -1;
     const MODIFY_JOBS_SET = 1;
     const MODIFY_JOBS_DEL = 2;
     const MODIFY_JOBS_ADD = 3;
-    const DEFAULT_PAGE_CLASS = 'Phpfetcher_Page_Default';
-    const ABSTRACT_PAGE_CLASS = 'Phpfetcher_Page_Abstract';
+    const DEFAULT_PAGE_CLASS = 'xiaogouxo\phpfetcher\Page\PageDefault';
+    const ABSTRACT_PAGE_CLASS = 'xiaogouxo\phpfetcher\Page\Page';
 
     const INT_TYPE = 1;
     const STR_TYPE = 2;
@@ -51,7 +51,7 @@ abstract class Crawler_Default extends Crawler_Abstract {
         }
 
         $this->_objSchemeTrie = 
-                new Util_Trie($arrInitParam['url_schemes']);
+                new UtilTrie($arrInitParam['url_schemes']);
     }
 
     /**
@@ -199,7 +199,7 @@ abstract class Crawler_Default extends Crawler_Abstract {
             }
 
             $objPage = new $strPageClassName;
-            if (!($objPage instanceof Page_Abstract)) {
+            if (!($objPage instanceof Page)) {
                 throw new \Exception("[$strPageClassName] is not an instance of " . self::ABSTRACT_PAGE_CLASS);
             }
         } catch (\Exception $e) {
