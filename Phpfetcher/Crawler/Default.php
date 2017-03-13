@@ -20,9 +20,9 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
     const ARR_TYPE = 3;
 
     protected static $arrJobFieldTypes = array(
-        'start_page' => self::STR_TYPE, 
-        'link_rules' => self::ARR_TYPE, 
-        'max_depth'  => self::INT_TYPE, 
+        'start_page' => self::STR_TYPE,
+        'link_rules' => self::ARR_TYPE,
+        'max_depth'  => self::INT_TYPE,
         'max_pages'  => self::INT_TYPE,
     );
 
@@ -44,7 +44,7 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
             $arrInitParam['url_schemes'] = array("http", "https", "ftp");
         }
 
-        $this->_objSchemeTrie = 
+        $this->_objSchemeTrie =
                 new Phpfetcher_Util_Trie($arrInitParam['url_schemes']);
     }
 
@@ -112,7 +112,7 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
 
     /**
      * @author xuruiqi
-     * @param : 
+     * @param :
      *      //$intOptType === MODIFY_JOBS_SET|MODIFY_JOBS_ADD,
      *        $arrInput参见addFetchJobs的入参$arrInput
      *      //$intOptType === MODIFY_JOBS_DEL,
@@ -227,13 +227,13 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
             $intPageNum = 0;
             $arrIndice = array(0, 1);
             $arrJobs = array(
-                0 => array($job_rules['start_page']),   
+                0 => array($job_rules['start_page']),
                 1 => array(),
             );
 
             //开始爬取
             while (!empty($arrJobs[$arrIndice[0]])
-                && ($job_rules['max_depth'] === -1 || $intDepth < $job_rules['max_depth']) 
+                && ($job_rules['max_depth'] === -1 || $intDepth < $job_rules['max_depth'])
                 && ($job_rules['max_pages'] === -1 || $intPageNum < $job_rules['max_pages'])) {
 
                 $intDepth += 1;
@@ -254,15 +254,14 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
                     //的情况，如"/entry"等形式的URL
                     $strCurUrl = $objPage->getUrl();
                     $arrUrlComponents = parse_url($strCurUrl);
-                    
+
                     //匹配超链接
                     foreach ($job_rules['link_rules'] as $link_rule) {
                         foreach ($arrLinks as $link) {
-                            //if (preg_match($link_rule, $link) === 1
-                            //        && !$this->getHash($link)) {
-                            //    $this->setHash($link, true);
-                            //    $arrJobs[$intPushIndex][] = $link;
-                            //}
+                            if (substr($link, 0, 2) == "//") {
+                                $link = substr($link, 1);
+                            }
+
                             if (preg_match($link_rule, $link) === 1
                                     && !$this->getHash($link)) {
 
@@ -305,12 +304,12 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
                     $objPage->setExtraInfo(array('job_name' => $job_name ));
                     $this->handlePage($objPage);
                     $intPageNum += 1;
-                } 
+                }
 
                 if (!empty($this->_arrAdditionalUrls)) {
-                    $arrJobs[$intPushIndex] = 
-                            array_merge($arrJobs[$intPushIndex], 
-                                $this->_arrAdditionalUrls); 
+                    $arrJobs[$intPushIndex] =
+                            array_merge($arrJobs[$intPushIndex],
+                                $this->_arrAdditionalUrls);
                     $this->_arrAdditionalUrls = array();
                 }
 
