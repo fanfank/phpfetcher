@@ -3,7 +3,7 @@
 ##重要修改记录 - Important Improvements Log   
 2017-03-13　支持形如“//xxx.com/abc/def”的超链接    
 　　　　　　Support hyperlinks like "//xxx.com/abc/def"     
-2016-09-08　支持HTTPS   
+2016-09-08　支持HTTPS    
 　　　　　　Support HTTPS websites    
 2016-08-08　支持对爬虫设置Header。    
 　　　　　　Crawlers with Headers supported.    
