@@ -1,7 +1,10 @@
 <?php
-require_once(dirname(__FILE__) . '/simple_html_dom.php');
 
-/*
+namespace Phpfetcher\Dom;
+
+use Phpfetcher\Log;
+
+/**
  * @author xuruiqi
  * @date   2014.09.21
  * @copyright reetsee.com
@@ -9,37 +12,48 @@ require_once(dirname(__FILE__) . '/simple_html_dom.php');
  *         simple_html_dom's official site:
  *              http://sourceforge.net/projects/simplehtmldom
  */
-class Phpfetcher_Dom_SimpleHtmlDom extends Phpfetcher_Dom_Abstract {
-    protected $_dom = NULL;
 
-    function __destruct() {
+class SimpleHtmlDom extends AbstractDom
+{
+    /**
+     * @var $_dom \simple_html_dom
+     */
+    protected $_dom = null;
+
+    public function __destruct()
+    {
         if (method_exists($this->_dom, 'clear')) {
             $this->_dom->clear();
         }
     }
 
-    public function getElementById($id) {
+    public function getElementById($id)
+    {
         $strMethodName = 'getElementById';
         if (method_exists($this->_dom, $strMethodName)) {
             return $this->_dom->getElementById($id);
         } else {
-            Phpfetcher_Log::warning("method $strMethodName not exists");
-            return FALSE;
+            Log::warning("method $strMethodName not exists");
+
+            return false;
         }
     }
 
-    public function getElementsByTagName($tag) {
+    public function getElementsByTagName($tag)
+    {
         $strMethodName = 'getElementsByTagName';
         if (method_exists($this->_dom, $strMethodName)) {
             return $this->_dom->getElementsByTagName($tag);
         } else {
-            Phpfetcher_Log::warning("method $strMethodName not exists");
-            return FALSE;
+            Log::warning("method $strMethodName not exists");
+
+            return false;
         }
     }
 
-    public function loadHTML($content) {
-        if (NULL === $this->_dom) {
+    public function loadHTML($content)
+    {
+        if (null === $this->_dom) {
             if (function_exists('str_get_html')) {
                 $this->_dom = str_get_html($content);
             }
@@ -55,17 +69,20 @@ class Phpfetcher_Dom_SimpleHtmlDom extends Phpfetcher_Dom_Abstract {
     /**
      * @deprecated
      */
-    public function sel($pattern = '', $idx = NULL, $node = NULL) {
+    public function sel($pattern = '', $idx = null, $node = null)
+    {
         return $this->find($pattern, $idx);
     }
 
-    public function find($pattern = '', $idx = NULL) {
+    public function find($pattern = '', $idx = null)
+    {
         $strMethodName = 'find';
         if (method_exists($this->_dom, $strMethodName)) {
             return $this->_dom->find($pattern, $idx);
         } else {
-            Phpfetcher_Log::warning("method $strMethodName not exists");
-            return FALSE;
+            Log::warning("method $strMethodName not exists");
+
+            return false;
         }
     }
 }

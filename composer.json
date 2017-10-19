@@ -1,0 +1,28 @@
+{
+  "name": "fanfank/phpfetcher",
+  "description": "description_text",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "homepage": "http://www.reetsee.com",
+  "authors": [
+    {
+      "name": "fanfank",
+      "email": "fanfank@reetsee.com"
+    },
+    {
+      "name": "kwan",
+      "email": "303198069@qq.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.6.0"
+  },
+  "autoload": {
+    "files": [
+      "Libs/simple_html_dom.php"
+    ],
+    "psr-4": {
+      "Phpfetcher\\": "Phpfetcher"
+    }
+  }
+}

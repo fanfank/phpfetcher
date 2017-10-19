@@ -1,2 +1,5 @@
 output
 *.swp
+*.phar
+.idea/
+/vendor/

@@ -1,7 +1,9 @@
 <?php
-//require_once('autoload.php');
-require_once('phpfetcher.php');
-$page = new Phpfetcher_Page_Default();
+
+use Phpfetcher\Page\DefaultPage;
+
+require_once('bootstrap.php');
+$page = new DefaultPage();
 $page->init();
 //$page->setConfField('url', 'http://tech.qq.com/a/20140715/073002.htm');
 $page->setConfField('url', 'http://news.qq.com/a/20140921/000030.htm');
