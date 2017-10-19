@@ -1,30 +1,39 @@
 <?php
-/*
+
+namespace Phpfetcher\Crawler;
+
+use Phpfetcher\Log;
+use Phpfetcher\Page\AbstractPage;
+use Phpfetcher\Page\DefaultPage;
+use Phpfetcher\Util\Trie;
+
+/**
  * @author xuruiqi
  * @date 2014-07-17
  * @copyright reetsee.com
  * @desc 爬虫对象的默认类
  *       Crawler objects' default class
  */
-abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
+abstract class DefaultCrawler extends AbstractCrawler
+{
     const MAX_DEPTH = 20;
     const MAX_PAGE_NUM = -1;
     const MODIFY_JOBS_SET = 1;
     const MODIFY_JOBS_DEL = 2;
     const MODIFY_JOBS_ADD = 3;
-    const DEFAULT_PAGE_CLASS = 'Phpfetcher_Page_Default';
-    const ABSTRACT_PAGE_CLASS = 'Phpfetcher_Page_Abstract';
+    const DEFAULT_PAGE_CLASS = DefaultPage::class;
+    const ABSTRACT_PAGE_CLASS = AbstractPage::class;
 
     const INT_TYPE = 1;
     const STR_TYPE = 2;
     const ARR_TYPE = 3;
 
-    protected static $arrJobFieldTypes = array(
+    protected static $arrJobFieldTypes = [
         'start_page' => self::STR_TYPE,
         'link_rules' => self::ARR_TYPE,
         'max_depth'  => self::INT_TYPE,
         'max_pages'  => self::INT_TYPE,
-    );
+    ];
 
     /*
     protected static $arrJobDefaultFields = array(
@@ -33,19 +42,21 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
     );
      */
 
-    protected $_arrFetchJobs = array();
-    protected $_arrHash = array();
-    protected $_arrAdditionalUrls = array();
-    protected $_objSchemeTrie = array(); //合法url scheme的字典树
+    protected $_arrFetchJobs = [];
+    protected $_arrHash = [];
+    protected $_arrAdditionalUrls = [];
+    protected $_objSchemeTrie = []; //合法url scheme的字典树
+
     //protected $_objPage = NULL; //Phpfetcher_Page_Default;
 
-    public function __construct($arrInitParam = array()) {
+    public function __construct($arrInitParam = [])
+    {
         if (!isset($arrInitParam['url_schemes'])) {
-            $arrInitParam['url_schemes'] = array("http", "https", "ftp");
+            $arrInitParam['url_schemes'] = ["http", "https", "ftp"];
         }
 
         $this->_objSchemeTrie =
-                new Phpfetcher_Util_Trie($arrInitParam['url_schemes']);
+            new Trie($arrInitParam['url_schemes']);
     }
 
     /**
@@ -75,7 +86,8 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
      *       if a job has already been in jobs queue, new rules will
      *       cover the old ones.
      */
-    public function &addFetchJobs($arrInput = array()) {
+    public function &addFetchJobs($arrInput = [])
+    {
         return $this->_modifyFetchJobs($arrInput, self::MODIFY_JOBS_ADD);
     }
 
@@ -92,15 +104,19 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
      *      Object $this : returns the instance itself
      * @desc delete fetch rules according to job names
      */
-    public function &delFetchJobs($arrInput = array()) {
+    public function &delFetchJobs($arrInput = [])
+    {
         return $this->_modifyFetchJobs($arrInput, self::MODIFY_JOBS_DEL);
     }
 
-    public function getFetchJobByName($job_name) {
+    public function getFetchJobByName($job_name)
+    {
+        //@todo
         return $this->_arrFetchJobs[$strJobName];
     }
 
-    public function getFetchJobs() {
+    public function getFetchJobs()
+    {
         return $this->_arrFetchJobs;
     }
 
@@ -122,11 +138,12 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
      *      Object $this : returns the instance itself
      * @desc set fetch rules.
      */
-    protected function &_modifyFetchJobs($arrInput = array(), $intOptType) {
-        $arrInvalidJobs = array();
+    protected function &_modifyFetchJobs($arrInput = [], $intOptType)
+    {
+        $arrInvalidJobs = [];
         if ($intOptType === self::MODIFY_JOBS_SET || $intOptType === self::MODIFY_JOBS_ADD) {
             if ($intOptType === self::MODIFY_JOBS_SET) {
-                $this->_arrFetchJobs = array();
+                $this->_arrFetchJobs = [];
             }
             foreach ($arrInput as $job_name => $job_rules) {
                 $this->_correctJobParam($job_rules);
@@ -136,18 +153,21 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
                     $arrInvalidJobs[] = $job_name;
                 }
             }
-        } else if ($intOptType === self::MODIFY_JOBS_DEL) {
-            foreach ($arrInput as $job_name) {
-                unset($this->_arrFetchJobs[$job_name]);
-            }
         } else {
-            Phpfetcher_Log::warning("Unknown options for fetch jobs [{$intOptType}]");
+            if ($intOptType === self::MODIFY_JOBS_DEL) {
+                foreach ($arrInput as $job_name) {
+                    unset($this->_arrFetchJobs[$job_name]);
+                }
+            } else {
+                Log::warning("Unknown options for fetch jobs [{$intOptType}]");
+            }
         }
 
 
         if (!empty($arrInvalidJobs)) {
-            Phpfetcher_Log::notice('Invalid jobs:' . implode(',', $arrInvalidJobs));
+            Log::notice('Invalid jobs:'.implode(',', $arrInvalidJobs));
         }
+
         return $this;
     }
 
@@ -159,7 +179,8 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
      *      Object $this : returns the instance itself
      * @desc set fetch jobs.
      */
-    public function &setFetchJobs($arrInput = array()) {
+    public function &setFetchJobs($arrInput = [])
+    {
         return $this->_modifyFetchJobs($arrInput, self::MODIFY_JOBS_SET);
     }
 
@@ -175,37 +196,43 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
      *      obj $this
      * @desc
      */
-    public function &run($arrInput = array()) {
+    public function &run($arrInput = [])
+    {
         if (empty($this->_arrFetchJobs)) {
-            Phpfetcher_Log::warning("No fetch jobs.");
+            Log::warning("No fetch jobs.");
+
             return $this;
         }
 
         //构建Page对象
-        $objPage = NULL;
+        $objPage = null;
         $strPageClassName = self::DEFAULT_PAGE_CLASS;
         if (!empty($arrInput['page_class_name'])) {
             $strPageClassName = strval($arrInput['page_class_name']);
         }
         try {
-            if (!class_exists($strPageClassName, TRUE)) {
-                throw new Exception("[$strPageClassName] class not exists!");
+            if (!class_exists($strPageClassName, true)) {
+                throw new \Exception("[$strPageClassName] class not exists!");
             }
 
+            /**
+             * @var $objPage \Phpfetcher\Page\DefaultPage
+             */
             $objPage = new $strPageClassName;
-            if (!($objPage instanceof Phpfetcher_Page_Abstract)) {
-                throw new Exception("[$strPageClassName] is not an instance of " . self::ABSTRACT_PAGE_CLASS);
+            if (!($objPage instanceof AbstractPage)) {
+                throw new \Exception("[$strPageClassName] is not an instance of ".self::ABSTRACT_PAGE_CLASS);
             }
-        } catch (Exception $e) {
-            Phpfetcher_Log::fatal($e->getMessage());
+        } catch (\Exception $e) {
+            Log::fatal($e->getMessage());
+
             return $this;
         }
 
         //初始化Page对象
-        $arrPageConf = empty($arrInput['page_conf']) ? array() : $arrInput['page_conf'];
+        $arrPageConf = empty($arrInput['page_conf']) ? [] : $arrInput['page_conf'];
         $objPage->init();
         if (!empty($arrPageConf)) {
-            if(isset($arrPageConf['url'])) {
+            if (isset($arrPageConf['url'])) {
                 unset($arrPageConf['url']);
             }
             $objPage->setConf($arrPageConf);
@@ -214,7 +241,7 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
         //遍历任务队列
         foreach ($this->_arrFetchJobs as $job_name => $job_rules) {
             if (!($this->_isJobValid($job_rules))) {
-                Phpfetcher_Log::warning("Job rules invalid [" . serialize($job_rules) . "]");
+                Log::warning("Job rules invalid [".serialize($job_rules)."]");
                 continue;
             }
 
@@ -223,13 +250,13 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
                 $objPage->setConf($job_rules['page_conf']);
             }
 
-            $intDepth   = 0;
+            $intDepth = 0;
             $intPageNum = 0;
-            $arrIndice = array(0, 1);
-            $arrJobs = array(
-                0 => array($job_rules['start_page']),
-                1 => array(),
-            );
+            $arrIndice = [0, 1];
+            $arrJobs = [
+                0 => [$job_rules['start_page']],
+                1 => [],
+            ];
 
             //开始爬取
             while (!empty($arrJobs[$arrIndice[0]])
@@ -239,7 +266,7 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
                 $intDepth += 1;
                 $intPopIndex = $arrIndice[0];
                 $intPushIndex = $arrIndice[1];
-                $arrJobs[$intPushIndex] = array();
+                $arrJobs[$intPushIndex] = [];
                 foreach ($arrJobs[$intPopIndex] as $url) {
                     if (!($job_rules['max_pages'] === -1 || $intPageNum < $job_rules['max_pages'])) {
                         break;
@@ -248,7 +275,7 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
                     $objPage->read();
 
                     //获取所有的超链接
-                    $arrLinks  = $objPage->getHyperLinks();
+                    $arrLinks = $objPage->getHyperLinks();
 
                     //解析当前URL的各个组成部分，以应对超链接中存在站内链接
                     //的情况，如"/entry"等形式的URL
@@ -263,7 +290,7 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
                             }
 
                             if (preg_match($link_rule, $link) === 1
-                                    && !$this->getHash($link)) {
+                                && !$this->getHash($link)) {
 
                                 //拼出实际的URL
                                 $real_link = $link;
@@ -279,18 +306,19 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
                                 }
 
                                 if ($colon_pos === false
-                                        || !$this->_objSchemeTrie->has(
-                                            substr($link, 0, $colon_pos))) {
+                                    || !$this->_objSchemeTrie->has(
+                                        substr($link, 0, $colon_pos)
+                                    )) {
                                     //将站内地址转换为完整地址
                                     $real_link = $arrUrlComponents['scheme']
-                                            . "://"
-                                            . $arrUrlComponents['host']
-                                            . (isset($arrUrlComponents['port'])
-                                                && strlen($arrUrlComponents['port']) != 0 ?
-                                                    ":{$arrUrlComponents['port']}" :
-                                                    "")
-                                            . ($link[0] == '/' ?
-                                                $link : "/$link");
+                                        ."://"
+                                        .$arrUrlComponents['host']
+                                        .(isset($arrUrlComponents['port'])
+                                        && strlen($arrUrlComponents['port']) != 0 ?
+                                            ":{$arrUrlComponents['port']}" :
+                                            "")
+                                        .($link[0] == '/' ?
+                                            $link : "/$link");
                                 }
 
                                 $this->setHash($link, true);
@@ -301,25 +329,29 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
                     }
 
                     //由用户实现handlePage函数
-                    $objPage->setExtraInfo(array('job_name' => $job_name ));
+                    $objPage->setExtraInfo(['job_name' => $job_name]);
                     $this->handlePage($objPage);
                     $intPageNum += 1;
                 }
 
                 if (!empty($this->_arrAdditionalUrls)) {
                     $arrJobs[$intPushIndex] =
-                            array_merge($arrJobs[$intPushIndex],
-                                $this->_arrAdditionalUrls);
-                    $this->_arrAdditionalUrls = array();
+                        array_merge(
+                            $arrJobs[$intPushIndex],
+                            $this->_arrAdditionalUrls
+                        );
+                    $this->_arrAdditionalUrls = [];
                 }
 
                 self::_swap($arrIndice[0], $arrIndice[1]);
             }
         }
+
         return $this;
     }
 
-    protected function _correctJobParam(&$job_rules) {
+    protected function _correctJobParam(&$job_rules)
+    {
         /*
         foreach (self::$arrJobDefaultFields as $field => $value) {
             if (!isset($job_rules[$field]) || ($job_rules['']))
@@ -338,37 +370,44 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
      * @author xuruiqi
      * @desc check if a rule is valid
      */
-    protected function _isJobValid($arrRule) {
+    protected function _isJobValid($arrRule)
+    {
         foreach (self::$arrJobFieldTypes as $field => $type) {
             if (!isset($arrRule[$field]) || ($type === self::ARR_TYPE && !is_array($arrRule[$field]))) {
-                return FALSE;
+                return false;
             }
         }
-        return TRUE;
+
+        return true;
     }
 
-    protected static function _swap(&$a, &$b) {
+    protected static function _swap(&$a, &$b)
+    {
         $tmp = $a;
         $a = $b;
         $b = $tmp;
     }
 
-    public function getHash($strRawKey) {
+    public function getHash($strRawKey)
+    {
         $strRawKey = strval($strRawKey);
         $strKey = md5($strRawKey);
         if (isset($this->_arrHash[$strKey])) {
             return $this->_arrHash[$strKey];
         }
-        return NULL;
+
+        return null;
     }
 
-    public function setHash($strRawKey, $value) {
+    public function setHash($strRawKey, $value)
+    {
         $strRawKey = strval($strRawKey);
         $strKey = md5($strRawKey);
         $this->_arrHash[$strKey] = $value;
     }
 
-    public function setHashIfNotExist($strRawKey, $value) {
+    public function setHashIfNotExist($strRawKey, $value)
+    {
         $strRawKey = strval($strRawKey);
         $strKey = md5($strRawKey);
 
@@ -381,13 +420,15 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
         return $bolExist;
     }
 
-    public function clearHash() {
-        $this->_arrHash = array();
+    public function clearHash()
+    {
+        $this->_arrHash = [];
     }
 
-    public function addAdditionalUrls($url) {
+    public function addAdditionalUrls($url)
+    {
         if (!is_array($url)) {
-            $url = array($url);
+            $url = [$url];
         }
 
         $intAddedNum = 0;
@@ -402,5 +443,4 @@ abstract class Phpfetcher_Crawler_Default extends Phpfetcher_Crawler_Abstract {
 
         return $intAddedNum;
     }
-};
-?>
+}

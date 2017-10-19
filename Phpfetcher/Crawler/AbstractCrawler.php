@@ -1,28 +1,49 @@
 <?php
-/*
+namespace Phpfetcher\Crawler;
+
+use Phpfetcher\Log;
+
+/**
  * @author xuruiqi
  * @date 2014-07-17
  * @copyright reetsee.com
  * @desc 爬虫对象的抽象类
  *       Crawler objects' abstract class
  */
-abstract class Phpfetcher_Crawler_Abstract {
-    protected $_arrPostFetchHooks = array();
-    protected $_arrPreFetchHooks  = array();
+
+abstract class AbstractCrawler
+{
+    protected $_arrPostFetchHooks = [];
+    protected $_arrPreFetchHooks = [];
     //protected $_arrExtraInfo = array();
 
-    //设置爬虫的爬取规则
-    abstract function &setFetchJobs($arrInput = array());
+    /**
+     * 设置爬虫的爬取规则
+     * @param array $arrInput
+     * @return mixed
+     */
+    abstract function &setFetchJobs($arrInput = []);
 
-    //删除一条已有的爬取规则
-    public function delFetchJobs($arrInput) {
-        Phpfetcher_Log::notice('not implemented');
+    /**
+     * 删除一条已有的爬取规则
+     * @param $arrInput
+     */
+    public function delFetchJobs($arrInput)
+    {
+        Log::notice('not implemented');
     }
 
-    //查看已有的爬取规则
+    /**
+     * 查看已有的爬取规则
+     * @return mixed
+     */
     abstract function getFetchJobs();
 
-    //对于每次爬取到的页面，进行的操作，这个方法需要使用者自己实现
+    /**
+     * 对于每次爬取到的页面，进行的操作，这个方法需要使用者自己实现
+     * @param \Phpfetcher\Page\DefaultPage $objPage
+     * @return mixed
+     */
     abstract function handlePage($objPage);
 
     /*
@@ -54,7 +75,10 @@ abstract class Phpfetcher_Crawler_Abstract {
     }
      */
 
-    //运行爬虫
-    abstract function &run($arrInput = array());
+    /**
+     * 运行爬虫
+     * @param array $arrInput
+     * @return mixed
+     */
+    abstract function &run($arrInput = []);
 }
-?>

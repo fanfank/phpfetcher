@@ -1,36 +1,45 @@
 <?php
-/*
+
+namespace Phpfetcher\Util;
+
+use Phpfetcher\Log;
+
+/**
  * @author xuruiqi
  * @date 2015-10-26
  * @copyright reetsee.com
  * @desc 字典树的简单实现，没有做内存优化
  *       A simple implementation of trie without improvements on memory
  */
-class Phpfetcher_Util_Trie {
-    protected $_arrTrieRoot = array();
 
-    public function __construct($arrStrings = array()) {
-        $this->_arrTrieRoot = array(
-            'children' => array(),       
+class Trie
+{
+    protected $_arrTrieRoot = [];
+
+    public function __construct(array $arrStrings = [])
+    {
+        $this->_arrTrieRoot = [
+            'children' => [],
             'count'    => 0,
-        );
+        ];
         foreach ($arrStrings as $str) {
             $this->insert($str);
         }
     }
 
-    public function insert($str) {
+    public function insert($str)
+    {
         try {
-            $str        = strval($str);
-            $intLen     = strlen($str);
+            $str = strval($str);
+            $intLen = strlen($str);
             $arrCurNode = &$this->_arrTrieRoot;
 
             for ($i = 0; $i < $intLen; ++$i) {
                 if (!isset($arrCurNode['children'][$str[$i]])) {
-                    $arrCurNode['children'][$str[$i]] = array(
-                        'children' => array(),
+                    $arrCurNode['children'][$str[$i]] = [
+                        'children' => [],
                         'count'    => 0,
-                    );
+                    ];
                 }
                 $arrCurNode = &$arrCurNode['children'][$str[$i]];
             }
@@ -38,41 +47,48 @@ class Phpfetcher_Util_Trie {
             $arrCurNode['count'] += 1;
             unset($arrCurNode);
 
-        } catch (Exception $e) {
-            Phpfetcher_Log::fatal($e->getMessage());
+        } catch (\Exception $e) {
+            Log::fatal($e->getMessage());
+
             return false;
         }
 
         return true;
     }
 
-    public function delete($str) {
+    public function delete($str)
+    {
         $arrCurNode = &$this->_locateNode($str);
         if (!is_null($arrCurNode) && $arrCurNode['count'] > 0) {
             $arrCurNode['count'] -= 1;
         }
         unset($arrCurNode);
+
         return true;
     }
 
-    public function has($str) {
+    public function has($str)
+    {
         $arrTargetNode = &$this->_locateNode($str);
         $bolRes = false;
         if (!is_null($arrTargetNode) && $arrTargetNode['count'] > 0) {
             $bolRes = true;
         }
         unset($arrTargetNode);
+
         return $bolRes;
     }
 
-    protected function &_locateNode($str) {
+    protected function &_locateNode($str)
+    {
         $str = strval($str);
-        $intLen     = strlen($str);
+        $intLen = strlen($str);
         $arrCurNode = &$this->_arrTrieRoot;
 
         for ($i = 0; $i < $intLen; ++$i) {
             if (!isset($arrCurNode['children'][$str[$i]])) {
-                return null;
+                //Only variable references should be returned by reference
+                return;
             }
             $arrCurNode = &$arrCurNode['children'][$str[$i]];
         }
@@ -84,4 +100,4 @@ class Phpfetcher_Util_Trie {
     //    $str = strval($str);
     //    //TODO
     //}
-};
+}

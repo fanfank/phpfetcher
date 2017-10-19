@@ -1,27 +1,36 @@
 <?php
-/*
+
+namespace Phpfetcher\Page;
+
+/**
  * @author xuruiqi
  * @date   2014.06.28
  * @copyright reetsee.com
  * @abstract Page's abstract class
  */
-abstract class Phpfetcher_Page_Abstract {
 
-    protected $_strContent = NULL;
+abstract class AbstractPage
+{
 
-    public function __construct() {
+    protected $_strContent = null;
+
+    public function __construct()
+    {
 
     }
 
-    public function __destruct() {
+    public function __destruct()
+    {
 
     }
 
-    public function __get($key) {
+    public function __get($key)
+    {
         echo $key, 'doesn\'t exist!';
     }
 
-    public function __set($key, $val) {
+    public function __set($key, $val)
+    {
         echo "Can't assign '$val' to $key!";
     }
 
@@ -30,7 +39,7 @@ abstract class Phpfetcher_Page_Abstract {
      */
     abstract function getConf();
     //{
-        //echo 'Not implemented';
+    //echo 'Not implemented';
     //}
 
     /**
@@ -51,9 +60,9 @@ abstract class Phpfetcher_Page_Abstract {
     /**
      * @abstract set configurations.
      */
-    abstract function setConf($conf = array());
+    abstract function setConf($conf = []);
     //{
-        //echo 'Not implemented';
+    //echo 'Not implemented';
     //}
 
     /**
@@ -61,7 +70,10 @@ abstract class Phpfetcher_Page_Abstract {
      */
     abstract function setUrl($url);
 
-    //取出$_strContent中的所有<a>标签的内容，以数组形式返回
+    /**
+     * 取出$_strContent中的所有<a>标签的内容，以数组形式返回
+     * @return mixed
+     */
     abstract function getHyperLinks();
 }
-?>
+

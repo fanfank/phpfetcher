@@ -1,6 +1,8 @@
 <?php
-require_once('phpfetcher.php');
-class mycrawler extends Phpfetcher_Crawler_Default {
+
+use Phpfetcher\Crawler\DefaultCrawler;
+
+class mycrawler extends DefaultCrawler {
     public function handlePage($page) {
         print_r($page->getHyperLinks());
     }
@@ -25,5 +27,3 @@ $arrFetchJobs = array(
 );
 $crawler->setFetchJobs($arrFetchJobs)->run();
 //$page->setConfField('url', 'http://tech.qq.com/a/20140715/073002.htm');
-
-?>

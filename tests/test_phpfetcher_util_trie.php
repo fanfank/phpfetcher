@@ -1,22 +1,26 @@
 <?php
-$test_include_path = dirname(__FILE__) . '/../';
-set_include_path(get_include_path() . PATH_SEPARATOR . $test_include_path);
+require_once('bootstrap.php');
 
-require_once('phpfetcher.php');
+use Phpfetcher\Util\Trie;
 
-function print_trie(&$trie) {
-    echo "has ftp:" . var_export($trie->has("ftp"), true) . "\n";
-    echo "has http:" . var_export($trie->has("http"), true) . "\n";
-    echo "has https:" . var_export($trie->has("https"), true) . "\n";
+$test_include_path = dirname(__FILE__).'/../';
+set_include_path(get_include_path().PATH_SEPARATOR.$test_include_path);
+
+
+function print_trie(&$trie)
+{
+    echo "has ftp:".var_export($trie->has("ftp"), true)."\n";
+    echo "has http:".var_export($trie->has("http"), true)."\n";
+    echo "has https:".var_export($trie->has("https"), true)."\n";
     echo "\n";
 }
 
-$arrSchemes = array(
-    "http",        
+$arrSchemes = [
+    "http",
     "https",
     "ftp",
-);
-$trie = new Phpfetcher_Util_Trie($arrSchemes);
+];
+$trie = new Trie($arrSchemes);
 print_trie($trie);
 
 echo "delete 'abc'\n";
